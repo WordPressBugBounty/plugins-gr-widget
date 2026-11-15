@@ -13,10 +13,87 @@ class GRWI_API_Client
 
     private bool $retrying_after_auth_failure = false;
 
-    /** Explicit administrator opt-in is required, including upgraded installations. */
+    /** Effective service authorisation; explicit administrator decisions always win. */
     public static function service_allowed(): bool
     {
-        return (bool) get_option('grwi_service_consent', false);
+        $consent = get_option('grwi_service_consent', null);
+        $legacy = self::legacy_authorization();
+
+        return $consent !== null ? (bool) $consent : in_array($legacy, [
+            'linked_account', 'configured_business', 'saved_embed',
+        ], true);
+    }
+
+    /**
+     * Make one local compatibility decision, before the saved version is updated.
+     * Do not write consent: this records prior service configuration, not a new opt-in.
+     * In particular, activation credentials/capability caches alone prove nothing.
+     */
+    private static function legacy_authorization(): string
+    {
+        $saved = get_option('grwi_legacy_authorization', null);
+        if ($saved !== null) {
+            return is_string($saved) ? $saved : 'none';
+        }
+
+        $basis = 'none';
+        $version = (string) get_option('grwi_plugin_version', '');
+        if (get_option('grwi_service_consent', null) === null
+            && ($version === '' || version_compare($version, '1.2.5', '<='))) {
+            $token = (string) get_option('grwi_api_token', '');
+            $registered = (int) get_option('grwi_site_id', 0) > 0
+                && (string) get_option('grwi_site_secret', '') !== '';
+
+            if ((bool) get_option('grwi_linked', false) && trim($token) !== '') {
+                // Tokens are saved by the administrator's account-link flow, never activation.
+                $basis = 'linked_account';
+            } elseif ($registered && self::has_configured_business()) {
+                $basis = 'configured_business';
+            } elseif (self::has_saved_embed()) {
+                $basis = $registered ? 'saved_embed' : 'reconnect';
+            }
+        }
+
+        // add_option is atomic: simultaneous requests cannot replace the first decision.
+        add_option('grwi_legacy_authorization', $basis, '', false);
+
+        return (string) get_option('grwi_legacy_authorization', 'none');
+    }
+
+    private static function has_configured_business(): bool
+    {
+        $places = get_option('grwi_remembered_places', []);
+        if (! is_array($places)) {
+            return false;
+        }
+        foreach ($places as $place) {
+            if (is_array($place) && is_string($place['place_id'] ?? null)
+                && trim($place['place_id']) !== ''
+                && is_string($place['business_name'] ?? $place['name'] ?? null)
+                && trim($place['business_name'] ?? $place['name']) !== '') {
+                // Only deliberate business selection/widget creation stores these rows.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Read only recognised, deliberately saved widget configuration. */
+    private static function has_saved_embed(): bool
+    {
+        require_once __DIR__ . '/class-grwi-legacy-configuration.php';
+
+        return GRWI_Legacy_Configuration::has_saved_embed();
+    }
+
+    /** Whether the consent screen should explain recovery rather than first-time setup. */
+    public static function has_existing_setup(): bool
+    {
+        return (int) get_option('grwi_site_id', 0) > 0
+            || (string) get_option('grwi_api_token', '') !== ''
+            || self::has_configured_business()
+            || in_array(self::legacy_authorization(), ['saved_embed', 'reconnect'], true);
     }
 
     public function __construct()
@@ -134,7 +211,7 @@ class GRWI_API_Client
             return true;
         }
 
-        if (! (bool) get_option('grwi_service_consent', false)) {
+        if (! self::service_allowed()) {
             return false;
         }
 
@@ -1268,3 +1345,4 @@ class GRWI_API_Client
         return $site_id > 0 ? ['site_id' => $site_id] : [];
     }
 }
+

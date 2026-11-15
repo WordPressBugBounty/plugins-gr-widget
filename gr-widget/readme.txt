@@ -4,7 +4,7 @@ Tags: google reviews, google reviews widget, google reviews embed, business revi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,7 +95,7 @@ For a full walkthrough, follow our guide to [embed Google reviews in WordPress](
 
 The plugin loads the embed script automatically on pages that contain a widget — no manual `<script>` tag needed.
 
-Service requests and plugin-generated embeds require the explicit connection consent above. After upgrading from a version that did not record consent, an administrator must confirm the connection in GR Widget; saved widget and account details are retained. Inactive or unrendered sidebar widgets do not trigger embed loading.
+New installations require the explicit connection consent above. Existing installations without a recorded consent decision retain service authorisation only when local settings establish prior deliberate configuration: a linked account token, a selected business with existing registration credentials, or a saved widget shortcode, block or HTML embed with existing registration credentials. Registration credentials and cached capabilities alone do not establish authorisation. Explicit refusal always takes precedence. If prior configuration cannot be established, an administrator must confirm the connection in GR Widget; saved widget and account details are retained. Inactive or unrendered sidebar widgets do not trigger embed loading.
 
 == Support ==
 
@@ -194,7 +194,7 @@ This plugin uses GRWidget.com as an external SaaS service. Installing or activat
 * **User-initiated setup** — on selecting **Connect this website to GRWidget.com**, transmits the site URL and plugin version to register the site and retrieves applicable plan limits
 * **wp-admin (GR Widget)** — business search, widget create/delete, account linking, plan refresh; layout cards use local miniature previews (no iframes); live preview loads `grw-preview.js`; widget style editor runs entirely in wp-admin
 * **Widget customisation** — colours, fonts, and display options are edited on the native **Customise** screen in wp-admin (API-backed; no external tabs or iframes). After linking an account, you can also customise the same widgets in the full-featured web builder
-* **Public site** — loads `grwidget.com/v1/grwidget.js` only after service consent on pages that actually render a GR Widget shortcode, block or embed container (not site-wide); the script fetches widget JSON to render review embeds
+* **Public site** — loads `grwidget.com/v1/grwidget.js` only after service authorisation (explicit consent or established legacy configuration as described above), on pages that actually render a GR Widget shortcode, block or embed container (not site-wide); the script fetches widget JSON to render review embeds
 * **Background** — plan limits may refresh twice daily via WordPress cron
 
 **Data sent to GRWidget.com:**
@@ -260,6 +260,12 @@ This plugin uses GRWidget.com as an external SaaS service. Installing or activat
 This plugin does not load third-party advertising or analytics trackers on your public site. Scripts and styles for wp-admin UI (except the GRWidget.com connections above) are bundled in the plugin. Upgrade and account links open GRWidget.com in your browser only when you click them.
 
 == Changelog ==
+
+= 1.2.6 =
+* Fixed an issue introduced in 1.2.5 that could prevent existing Google review widgets from appearing after a plugin update.
+* Restored previously authorised connections and existing widget displays without requiring eligible customers to reconnect.
+* Added a clear WordPress admin notice for sites that need to confirm or restore their connection.
+* Preserved explicit consent requirements for new installations and respected existing consent decisions.
 
 = 1.2.5 =
 * Require explicit service consent for all service requests and embeds, including upgraded installations.
@@ -411,3 +417,4 @@ Display name updated to "GR Widget – Google Reviews Widget". No functional cha
 
 = 1.0.0 =
 Initial public release on WordPress.org.
+

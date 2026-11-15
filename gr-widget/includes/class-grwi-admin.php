@@ -54,6 +54,7 @@ class GRWI_Admin
         add_action('admin_menu', [self::class, 'menu']);
         add_action('admin_enqueue_scripts', [self::class, 'assets']);
         add_action('admin_init', [self::class, 'handle_actions']);
+        add_action('admin_notices', [self::class, 'connection_notice']);
         add_action('wp_ajax_grwi_search_places', [self::class, 'ajax_search_places']);
         add_action('wp_ajax_grwi_recent_places', [self::class, 'ajax_recent_places']);
         add_action('wp_ajax_grwi_remember_place', [self::class, 'ajax_remember_place']);
@@ -72,6 +73,28 @@ class GRWI_Admin
         add_action('wp_ajax_grwi_install_check', [self::class, 'ajax_install_check']);
         add_action('wp_ajax_grwi_install_guide', [self::class, 'ajax_install_guide']);
         add_action('wp_ajax_grwi_install_help', [self::class, 'ajax_install_help']);
+    }
+
+    public static function connection_notice(): void
+    {
+        if (! is_admin() || ! current_user_can('manage_options')
+            || GRWI_API_Client::service_allowed() || ! GRWI_API_Client::has_existing_setup()) {
+            return;
+        }
+
+        $screen = get_current_screen();
+        if (! $screen || ! in_array($screen->id, ['dashboard', 'plugins', 'toplevel_page_grwi-widget'], true)) {
+            return;
+        }
+
+        // A recovery notice resolves itself after approval; no remote request is needed.
+        ?>
+        <div class="notice notice-warning">
+            <p><strong><?php esc_html_e('GR Widget needs your attention', 'gr-widget'); ?></strong></p>
+            <p><?php esc_html_e('Your existing Google review widgets may not appear until you reconnect GR Widget. Your saved widgets and settings are still available.', 'gr-widget'); ?></p>
+            <p><a class="button button-primary" href="<?php echo esc_url(self::admin_page_url()); ?>"><?php esc_html_e('Reconnect GR Widget', 'gr-widget'); ?></a></p>
+        </div>
+        <?php
     }
 
     public static function menu(): void
@@ -1587,3 +1610,4 @@ class GRWI_Admin
         return GRWI_VERSION;
     }
 }
+

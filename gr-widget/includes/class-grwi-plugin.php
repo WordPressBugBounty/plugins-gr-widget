@@ -74,6 +74,8 @@ final class GRWI_Plugin
 
     public function activate(): void
     {
+        self::migrate_legacy_options();
+
         // Activation must not contact any external service or register this site.
         // GR Widget's setup screen asks the administrator for explicit consent.
         $service_active = (int) get_option('grwi_site_id', 0) > 0
@@ -102,6 +104,9 @@ final class GRWI_Plugin
     private static function maybe_upgrade_plugin(): void
     {
         self::migrate_legacy_options();
+
+        // Capture durable legacy setup before overwriting the installed version.
+        GRWI_API_Client::service_allowed();
 
         $stored_version = (string) get_option('grwi_plugin_version', '');
         if ($stored_version === GRWI_VERSION) {
@@ -160,3 +165,4 @@ final class GRWI_Plugin
     }
 
 }
+

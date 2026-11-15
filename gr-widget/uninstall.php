@@ -22,6 +22,7 @@ $grwi_options = [
     'grwi_hidden_recent_place_ids',
     'grwi_wp_review_prompt',
     'grwi_service_consent',
+    'grwi_legacy_authorization',
 ];
 
 foreach ($grwi_options as $grwi_option) {
@@ -48,3 +49,4 @@ foreach ($grwi_legacy_options as $grwi_option) {
 
 wp_clear_scheduled_hook('grwi_refresh_capabilities');
 wp_clear_scheduled_hook('grw_refresh_capabilities');
+
