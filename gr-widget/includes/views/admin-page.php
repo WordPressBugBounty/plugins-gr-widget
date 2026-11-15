@@ -153,13 +153,8 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
             <div class="grwi-review-ask__copy">
                 <h2 id="grwi-review-ask-title" class="grwi-review-ask__title">
                     <?php esc_html_e('How\'s GR Widget working for you?', 'gr-widget'); ?>
-                    <span class="grwi-review-ask__stars" aria-hidden="true">
-                        <?php for ($grwi_ask_star = 0; $grwi_ask_star < 5; $grwi_ask_star++) : ?>
-                            <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path d="M10 1.6 12.4 7l5.8.5-4.4 3.8 1.4 5.6L10 14.2 4.8 16.9l1.4-5.6L1.8 7.5 7.6 7 10 1.6Z"/></svg>
-                        <?php endfor; ?>
-                    </span>
                 </h2>
-                <p class="grwi-review-ask__text"><?php esc_html_e('We hope you\'re enjoying displaying your Google reviews! If you\'ve found the plugin useful, we\'d really appreciate an honest review on WordPress.org. It helps other website owners discover us and supports the continued development of the plugin.', 'gr-widget'); ?></p>
+                <p class="grwi-review-ask__text"><?php esc_html_e('If you have used GR Widget, we welcome your honest review on WordPress.org, whether positive or critical. Your experience helps other users and helps us improve.', 'gr-widget'); ?></p>
             </div>
             <div class="grwi-review-ask__actions">
                 <a class="grwi-review-ask__leave" data-grwi-review-ask="review" href="https://wordpress.org/support/plugin/gr-widget/reviews/#new-post" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Leave a review', 'gr-widget'); ?></a>
@@ -347,10 +342,10 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                     }
                     $grwi_limit_entitlement = sanitize_key($grwi_limit_meta_row['entitlement'] ?? '');
                     if ($grwi_limit_entitlement === '' || $grwi_limit_entitlement === 'link_account') {
-                        $legacy = sanitize_key($grwi_limit_meta_row['lock_tier'] ?? '');
-                        if ($legacy === 'link_account' || $grwi_limit_entitlement === 'link_account') {
+                        $grwi_legacy_lock_tier = sanitize_key($grwi_limit_meta_row['lock_tier'] ?? '');
+                        if ($grwi_legacy_lock_tier === 'link_account' || $grwi_limit_entitlement === 'link_account') {
                             $grwi_limit_entitlement = 'linked_free';
-                        } elseif (! empty($grwi_limit_meta_row['locked']) || $legacy === 'site') {
+                        } elseif (! empty($grwi_limit_meta_row['locked']) || $grwi_legacy_lock_tier === 'site') {
                             $grwi_limit_entitlement = 'site';
                         } else {
                             $grwi_limit_entitlement = 'unlinked';
@@ -683,10 +678,10 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                     $grwi_locked = ! empty($grwi_layout['locked']);
                     $grwi_entitlement = sanitize_key($grwi_layout['entitlement'] ?? '');
                     if ($grwi_entitlement === '' || $grwi_entitlement === 'link_account') {
-                        $legacy = sanitize_key($grwi_layout['lock_tier'] ?? '');
-                        if ($legacy === 'link_account' || $grwi_entitlement === 'link_account') {
+                        $grwi_legacy_lock_tier = sanitize_key($grwi_layout['lock_tier'] ?? '');
+                        if ($grwi_legacy_lock_tier === 'link_account' || $grwi_entitlement === 'link_account') {
                             $grwi_entitlement = 'linked_free';
-                        } elseif ($legacy === 'site') {
+                        } elseif ($grwi_legacy_lock_tier === 'site') {
                             $grwi_entitlement = 'site';
                         } elseif ($grwi_locked) {
                             $grwi_entitlement = 'site';
@@ -1053,7 +1048,7 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                 <div class="grw-account__body">
                     <?php if ($is_linked) : ?>
                         <?php
-                        $grwi_site_host = (string) (parse_url(home_url('/'), PHP_URL_HOST) ?: home_url('/'));
+                        $grwi_site_host = (string) (wp_parse_url(home_url('/'), PHP_URL_HOST) ?: home_url('/'));
                         $grwi_included_widgets = $grwi_max_widgets === null
                             ? __('Unlimited widgets', 'gr-widget')
                             : sprintf(
@@ -1362,15 +1357,10 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                 <div class="grw-wp-review__head">
                     <span class="grw-wp-review__logo" aria-hidden="true"><span class="dashicons dashicons-wordpress"></span></span>
                     <div class="grw-wp-review__head-copy">
-                        <h3 id="grwi-wp-review-heading" class="grw-wp-review__title"><?php esc_html_e('Enjoying GR Widget?', 'gr-widget'); ?></h3>
-                        <p class="grw-wp-review__stars" aria-hidden="true">
-                            <?php for ($grwi_star = 0; $grwi_star < 5; $grwi_star++) : ?>
-                                <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path d="M10 1.6 12.4 7l5.8.5-4.4 3.8 1.4 5.6L10 14.2 4.8 16.9l1.4-5.6L1.8 7.5 7.6 7 10 1.6Z"/></svg>
-                            <?php endfor; ?>
-                        </p>
+                        <h3 id="grwi-wp-review-heading" class="grw-wp-review__title"><?php esc_html_e('Share your GR Widget experience', 'gr-widget'); ?></h3>
                     </div>
                 </div>
-                <p class="grw-wp-review__text"><?php esc_html_e('We’d love to hear what you think! If GR Widget has been helpful, an honest review on WordPress.org would mean a lot. It helps other website owners discover us and supports the continued development of the plugin.', 'gr-widget'); ?></p>
+                <p class="grw-wp-review__text"><?php esc_html_e('Whether your experience has been positive or critical, your honest review helps other users and helps us improve GR Widget.', 'gr-widget'); ?></p>
                 <a class="grw-wp-review__btn" href="https://wordpress.org/support/plugin/gr-widget/reviews/#new-post" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Leave a WordPress review', 'gr-widget'); ?></a>
                 <p class="grw-wp-review__feedback">
                     <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true"><path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v6.2a1.5 1.5 0 0 1-1.5 1.5H8.2L4.5 16.8V13.7H4A1.5 1.5 0 0 1 2.5 12.2V6A1.5 1.5 0 0 1 4 4.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>

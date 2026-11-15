@@ -57,7 +57,6 @@
         float_offsets: 'Offset From Edge',
         outer_spacing: 'Outer Spacing',
         widget_width: 'Width',
-        custom_css: 'Custom CSS',
         review_count: 'Review Count',
         feed_display: 'Review Cards',
         feed_review_button: 'Review Button',
@@ -2157,8 +2156,8 @@
                 ? (i18n.customizeTrialHeadline || 'Make every widget match your brand')
                 : (i18n.customizeUpgradeHeadline || 'Make every widget match your brand'),
             body: trialEligible
-                ? (i18n.customizeTrialBody || 'Try custom colours, typography, spacing, borders, labels, and custom CSS free for 7 days on Site.')
-                : (i18n.customizeUpgradeBody || 'Unlock custom colours, typography, spacing, borders, labels, and custom CSS with Site.'),
+                ? (i18n.customizeTrialBody || 'Try custom colours, typography, spacing, borders, and labels free for 7 days on Site.')
+                : (i18n.customizeUpgradeBody || 'Unlock custom colours, typography, spacing, borders, and labels with Site.'),
             cta: trialEligible
                 ? (i18n.customizeTrialCta || 'Start 7-day free trial')
                 : (i18n.customizeUpgradeCta || 'Upgrade to Site'),
@@ -4279,24 +4278,6 @@
                 lockedChrome
             );
         }
-
-        var customCssBody = '';
-        (groups.custom_css || []).forEach(function (field) {
-            var spec = $.extend({}, field, {
-                hint: 'CSS is scoped to this widget.',
-                placeholder: 'Enter custom CSS for this widget…',
-                aria_label: 'Custom CSS for this widget',
-            });
-            customCssBody += renderField(spec, config, layout, {
-                omitLabel: true,
-                srLabel: 'Custom CSS for this widget',
-                placeholder: 'Enter custom CSS for this widget…',
-                ariaLabel: 'Custom CSS for this widget',
-                textareaClass: 'grw-textarea--css',
-                rows: 8,
-            });
-        });
-        accordionHtml += renderSectionAccordion('Custom CSS', customCssBody, '', 'custom_css', lockedChrome);
 
         var html = '<div class="grw-style-accordions" data-grwi-section-accordions data-grwi-exclusive-parents="customize">' +
             accordionHtml +

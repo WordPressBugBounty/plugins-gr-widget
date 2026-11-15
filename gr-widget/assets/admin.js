@@ -3337,12 +3337,28 @@
         $btn.prop('disabled', true);
         setConnectStatus(i18n.connectOpening || 'Opening GRWidget.com…');
 
+        // Open during the user's click, before AJAX can consume popup permission.
+        var width = 480;
+        var height = 720;
+        var left = Math.max(0, (window.screen.width - width) / 2);
+        var top = Math.max(0, (window.screen.height - height) / 2);
+        var popup = window.open(
+            'about:blank',
+            'grwiConnect',
+            'popup=yes,width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',noopener=no'
+        );
+        if (!popup) {
+            resetConnectUi($btn, i18n.connectPopupBlocked || 'Pop-up blocked. Allow pop-ups for this site and try again.');
+            return;
+        }
+
         $.post(grwiAdmin.ajaxUrl, {
             action: 'grwi_connect_start',
             nonce: grwiAdmin.nonce,
             opener_origin: window.location.origin
         }).done(function (resp) {
             if (!resp || !resp.success || !resp.data || !resp.data.connect_url) {
+                popup.close();
                 var failMsg = (resp && resp.data && resp.data.message) ? resp.data.message : (i18n.connectFailed || 'Could not start account connect.');
                 resetConnectUi($btn, failMsg);
                 return;
@@ -3350,20 +3366,11 @@
 
             var connectToken = resp.data.connect_token;
             var connectUrl = resp.data.connect_url;
-            var width = 480;
-            var height = 720;
-            var left = Math.max(0, (window.screen.width - width) / 2);
-            var top = Math.max(0, (window.screen.height - height) / 2);
-            var popup = window.open(
-                connectUrl,
-                'grwiConnect',
-                'popup=yes,width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',noopener=no'
-            );
-
-            if (!popup) {
-                resetConnectUi($btn, i18n.connectPopupBlocked || 'Pop-up blocked. Allow pop-ups for this site and try again.');
+            if (popup.closed) {
+                resetConnectUi($btn, i18n.connectHint || '');
                 return;
             }
+            popup.location.replace(connectUrl);
 
             setConnectStatus(i18n.connectWaiting || 'Waiting for you to finish in the popup…');
             if (activeConnectPollTimer) {
@@ -3415,6 +3422,7 @@
                 finishConnect(connectToken, $btn);
             });
         }).fail(function (xhr) {
+            popup.close();
             var msg = (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message)
                 ? xhr.responseJSON.data.message
                 : (i18n.connectFailed || 'Could not start account connect.');

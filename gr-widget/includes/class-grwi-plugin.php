@@ -26,6 +26,7 @@ final class GRWI_Plugin
 
     private function includes(): void
     {
+        require_once GRWI_PLUGIN_DIR . 'includes/class-grwi-config.php';
         require_once GRWI_PLUGIN_DIR . 'includes/class-grwi-api-client.php';
         require_once GRWI_PLUGIN_DIR . 'includes/class-grwi-upgrade.php';
         require_once GRWI_PLUGIN_DIR . 'includes/class-grwi-embed.php';
@@ -48,8 +49,19 @@ final class GRWI_Plugin
 
         GRWI_API_Client::migrate_stored_api_base();
 
-        if (! wp_next_scheduled('grwi_refresh_capabilities')) {
+        // Only schedule service requests after an administrator has connected the site.
+        // Existing registered sites retain their background refresh after upgrading.
+        $service_active = (int) get_option('grwi_site_id', 0) > 0
+            && (string) get_option('grwi_site_secret', '') !== '';
+        $service_active = $service_active || (
+            (bool) get_option('grwi_linked', false)
+            && (string) get_option('grwi_api_token', '') !== ''
+        );
+        $service_active = GRWI_API_Client::service_allowed() && $service_active;
+        if ($service_active && ! wp_next_scheduled('grwi_refresh_capabilities')) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'twicedaily', 'grwi_refresh_capabilities');
+        } elseif (! $service_active && wp_next_scheduled('grwi_refresh_capabilities')) {
+            wp_clear_scheduled_hook('grwi_refresh_capabilities');
         }
 
         GRWI_Embed::register();
@@ -62,10 +74,16 @@ final class GRWI_Plugin
 
     public function activate(): void
     {
-        $client = new GRWI_API_Client();
-        $client->ensure_registered();
-
-        if (! wp_next_scheduled('grwi_refresh_capabilities')) {
+        // Activation must not contact any external service or register this site.
+        // GR Widget's setup screen asks the administrator for explicit consent.
+        $service_active = (int) get_option('grwi_site_id', 0) > 0
+            && (string) get_option('grwi_site_secret', '') !== '';
+        $service_active = $service_active || (
+            (bool) get_option('grwi_linked', false)
+            && (string) get_option('grwi_api_token', '') !== ''
+        );
+        $service_active = GRWI_API_Client::service_allowed() && $service_active;
+        if ($service_active && ! wp_next_scheduled('grwi_refresh_capabilities')) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'twicedaily', 'grwi_refresh_capabilities');
         }
     }
@@ -73,7 +91,9 @@ final class GRWI_Plugin
     public function cron_refresh_capabilities(): void
     {
         $client = new GRWI_API_Client();
-        $client->refresh_capabilities();
+        if ($client->is_registered() || $client->is_linked()) {
+            $client->refresh_capabilities();
+        }
     }
 
     /**

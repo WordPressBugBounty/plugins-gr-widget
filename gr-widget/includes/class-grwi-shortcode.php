@@ -25,6 +25,10 @@ class GRWI_Shortcode
      */
     public static function render($atts): string
     {
+        if (! GRWI_API_Client::service_allowed()) {
+            return '';
+        }
+
         $atts = shortcode_atts(['id' => ''], $atts, 'grwi_widget');
         $embed_key = sanitize_text_field($atts['id']);
 

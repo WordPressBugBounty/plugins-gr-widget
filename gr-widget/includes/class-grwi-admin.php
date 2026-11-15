@@ -53,7 +53,6 @@ class GRWI_Admin
 
         add_action('admin_menu', [self::class, 'menu']);
         add_action('admin_enqueue_scripts', [self::class, 'assets']);
-        add_action('in_admin_header', [self::class, 'suppress_foreign_admin_notices'], 0);
         add_action('admin_init', [self::class, 'handle_actions']);
         add_action('wp_ajax_grwi_search_places', [self::class, 'ajax_search_places']);
         add_action('wp_ajax_grwi_recent_places', [self::class, 'ajax_recent_places']);
@@ -73,33 +72,6 @@ class GRWI_Admin
         add_action('wp_ajax_grwi_install_check', [self::class, 'ajax_install_check']);
         add_action('wp_ajax_grwi_install_guide', [self::class, 'ajax_install_guide']);
         add_action('wp_ajax_grwi_install_help', [self::class, 'ajax_install_help']);
-    }
-
-    /**
-     * Hide other plugins' admin notices on GR Widget screens (pollution / broken icons).
-     * Covers the dashboard and the native customize builder so messages like
-     * "Reset the optimized data successfully." (LiteSpeed / object-cache style)
-     * cannot relocate under our h1.
-     */
-    public static function suppress_foreign_admin_notices(): void
-    {
-        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
-        if (! $screen) {
-            return;
-        }
-
-        $allowed = [
-            'toplevel_page_grwi-widget',
-            'admin_page_grwi-customize',
-        ];
-        if (! in_array($screen->id, $allowed, true)) {
-            return;
-        }
-
-        remove_all_actions('admin_notices');
-        remove_all_actions('all_admin_notices');
-        remove_all_actions('network_admin_notices');
-        remove_all_actions('user_admin_notices');
     }
 
     public static function menu(): void
@@ -136,12 +108,15 @@ class GRWI_Admin
 
         wp_enqueue_style('grwi-admin', GRWI_PLUGIN_URL . 'assets/admin.css', [], self::asset_version('assets/admin.css'));
 
-        add_filter('wp_resource_hints', [self::class, 'resource_hints'], 10, 2);
-
         $client = new GRWI_API_Client();
+        if (! $client->is_registered() && ! $client->is_linked()) {
+            // Show a locally rendered opt-in screen without loading remote scripts.
+            return;
+        }
         if ($client->is_registered()) {
             $client->refresh_capabilities();
         }
+        add_filter('wp_resource_hints', [self::class, 'resource_hints'], 10, 2);
         $caps = $client->capabilities();
         $admin_deps = ['jquery'];
         $preview_script = esc_url((string) ($caps['preview_script_url'] ?? ''));
@@ -203,10 +178,13 @@ class GRWI_Admin
                 'copiedShortcode' => __('Shortcode copied to your clipboard.', 'gr-widget'),
                 'copy' => __('Copy', 'gr-widget'),
                 'copyShortcode' => __('Copy shortcode', 'gr-widget'),
+                /* translators: %s: widget name. */
                 'deleteConfirmNamed' => __('Delete “%s”? This will remove the widget from pages where its shortcode or block is used.', 'gr-widget'),
                 'thisWidget' => __('this widget', 'gr-widget'),
                 'duplicateFailed' => __('Could not duplicate widget.', 'gr-widget'),
+                /* translators: %d: number of widgets. */
                 'widgetCountSingular' => __('%d widget on this site', 'gr-widget'),
+                /* translators: %d: number of widgets. */
                 'widgetCountPlural' => __('%d widgets on this site', 'gr-widget'),
                 'selectBusiness' => __('Select a business above before creating a widget.', 'gr-widget'),
                 'selectBusinessContinue' => __('Select a business to continue', 'gr-widget'),
@@ -263,6 +241,7 @@ class GRWI_Admin
                 'widgetAllowanceSecondary' => __('Not now', 'gr-widget'),
                 /* translators: %s: layout name */
                 'siteLayoutTitle' => __('Unlock %s with Site', 'gr-widget'),
+                /* translators: %s: layout name. */
                 'siteLayoutBody' => __('Display your reviews using the %s. Site also includes 31 layouts, up to 30 reviews, reviewer photos, filters, bi-weekly syncing and full design control.', 'gr-widget'),
                 'siteLayoutSupporting' => __('$0 today. Your first payment of $5.99 is after 7 days unless you cancel.', 'gr-widget'),
                 'siteLayoutCta' => __('Start 7-day Site trial', 'gr-widget'),
@@ -270,9 +249,13 @@ class GRWI_Admin
                 'siteLayoutFooter' => __('Cancel anytime during the trial', 'gr-widget'),
                 'trialUnknownSupporting' => __('Trial eligibility will be confirmed before payment.', 'gr-widget'),
                 'trialIneligibleSupporting' => __('Charged at checkout. Cancel anytime.', 'gr-widget'),
+                /* translators: %s: required plan name. */
                 'previewFirstToastBody' => __('Preview and customise it freely. You’ll need %s to publish this design.', 'gr-widget'),
+                /* translators: %s: required plan name. */
                 'previewFirstBannerTitle' => __('Your design uses %s features', 'gr-widget'),
+                /* translators: 1: list of premium features, 2: required plan name. */
                 'previewFirstBannerBody' => __('%1$s require %2$s to publish. Keep designing for free—your current live widget won’t change.', 'gr-widget'),
+                /* translators: 1: premium feature name, 2: required plan name. */
                 'previewFirstBannerBodySingular' => __('%1$s requires %2$s to publish. Keep designing for free—your current live widget won’t change.', 'gr-widget'),
                 'previewFirstContinueEditing' => __('Continue editing', 'gr-widget'),
                 'brandingHiddenTitle' => __('Branding hidden in this preview', 'gr-widget'),
@@ -281,6 +264,7 @@ class GRWI_Admin
                 'brandingTrialCta' => __('Start your 7-day Site trial', 'gr-widget'),
                 'previewFirstStartTrial' => __('Start my free trial', 'gr-widget'),
                 'previewFirstDraftSaved' => __('Draft saved. Your current live widget is unchanged.', 'gr-widget'),
+                /* translators: %s: widget design name. */
                 'previewFirstPublishTitle' => __('Your %s design is ready', 'gr-widget'),
                 'customizeUpgradeCta' => __('Upgrade to Site', 'gr-widget'),
                 'unlinkTitle' => __('Unlink this site?', 'gr-widget'),
@@ -341,6 +325,19 @@ class GRWI_Admin
         $client = new GRWI_API_Client();
         $action = sanitize_key((string) wp_unslash($_POST['grwi_action']));
         $redirect = self::admin_page_url();
+
+        if ($action === 'enable_service') {
+            // The administrator explicitly authorises communication with GRWidget.com.
+            // This code only runs after the nonce + manage_options checks above.
+            update_option('grwi_service_consent', 1, false);
+            if (! $client->ensure_registered(false)) {
+                $redirect = add_query_arg('grwi_connect_error', '1', $redirect);
+            } elseif (! wp_next_scheduled('grwi_refresh_capabilities')) {
+                wp_schedule_event(time() + HOUR_IN_SECONDS, 'twicedaily', 'grwi_refresh_capabilities');
+            }
+            wp_safe_redirect($redirect);
+            exit;
+        }
 
         if ($action === 'create_widget') {
             $result = self::create_widget_from_request($client);
@@ -740,8 +737,8 @@ class GRWI_Admin
             'place_id' => sanitize_text_field(wp_unslash($_POST['place_id'] ?? '')),
             'business_name' => sanitize_text_field(wp_unslash($_POST['business_name'] ?? $_POST['name'] ?? '')),
             'formatted_address' => sanitize_text_field(wp_unslash($_POST['formatted_address'] ?? '')),
-            'rating' => isset($_POST['rating']) ? wp_unslash($_POST['rating']) : null,
-            'review_count' => isset($_POST['review_count']) ? wp_unslash($_POST['review_count']) : null,
+            'rating' => isset($_POST['rating']) ? sanitize_text_field(wp_unslash($_POST['rating'])) : null,
+            'review_count' => isset($_POST['review_count']) ? sanitize_text_field(wp_unslash($_POST['review_count'])) : null,
         ]);
 
         if ($place === null) {
@@ -1339,6 +1336,39 @@ class GRWI_Admin
         ]);
     }
 
+    /**
+     * Explicit opt-in for new, unregistered installations. No outbound calls
+     * or hosted JavaScript are required to render this screen.
+     */
+    private static function render_consent_screen(): void
+    {
+        ?>
+        <div class="wrap grw-admin">
+            <h1><?php esc_html_e('Set up GR Widget', 'gr-widget'); ?></h1>
+            <p><?php esc_html_e('GR Widget uses GRWidget.com (operated by EXTHUS LTD) to find Google businesses, host and synchronise reviews, create widgets, and render them on your website. A GRWidget.com account is not required to start.', 'gr-widget'); ?></p>
+            <p><?php esc_html_e('When you connect, this plugin sends your website URL and plugin version to GRWidget.com to register your site. When you choose to search for businesses or create widgets, the service receives your search terms, selected business information, and widget settings. Pages with published GR Widget embeds load the hosted script and send the visitor request to GRWidget.com.', 'gr-widget'); ?></p>
+            <p><?php esc_html_e('After connecting, previews and published widgets may load Google Fonts and Google-hosted reviewer images when those options are selected. Those browser requests disclose the IP address and browser information to the provider. Use the inherited font and disable photos to avoid these optional requests.', 'gr-widget'); ?></p>
+            <p>
+                <a href="<?php echo esc_url('https://grwidget.com/privacy'); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Privacy policy', 'gr-widget'); ?></a>
+                &nbsp;|&nbsp;
+                <a href="<?php echo esc_url('https://grwidget.com/terms'); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Terms of service', 'gr-widget'); ?></a>
+                &nbsp;|&nbsp;
+                <a href="<?php echo esc_url('https://policies.google.com/privacy'); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Google privacy policy', 'gr-widget'); ?></a>
+            </p>
+            <?php if (! empty($_GET['grwi_connect_error'])) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+                <div class="notice notice-error"><p><?php esc_html_e('Could not connect to GRWidget.com. Check connectivity and try again.', 'gr-widget'); ?></p></div>
+            <?php endif; ?>
+            <form method="post" action="<?php echo esc_url(self::admin_page_url()); ?>">
+                <?php wp_nonce_field('grwi_admin_action'); ?>
+                <input type="hidden" name="grwi_action" value="enable_service" />
+                <?php submit_button(__('Connect this website to GRWidget.com', 'gr-widget')); ?>
+            </form>
+            <p class="description"><?php esc_html_e('Activating this plugin alone does not register your site or contact GRWidget.com. Connecting is optional until you want to use the hosted widget features.', 'gr-widget'); ?></p>
+            <p class="description"><?php esc_html_e('If you used an earlier version without this consent step, your saved widgets and connection details are retained. Confirm the connection here to resume the hosted service.', 'gr-widget'); ?></p>
+        </div>
+        <?php
+    }
+
     public static function render_page(): void
     {
         if (! current_user_can('manage_options')) {
@@ -1346,7 +1376,11 @@ class GRWI_Admin
         }
 
         $client = new GRWI_API_Client();
-        $registered = $client->ensure_registered();
+        $registered = $client->is_registered();
+        if (! $registered && ! $client->is_linked()) {
+            self::render_consent_screen();
+            return;
+        }
         // Linked accounts: live-fetch widgets on this screen so web-builder widgets
         // appear without a manual Refresh click. Guarded so a re-init does not loop.
         static $grwi_admin_widgets_response = null;

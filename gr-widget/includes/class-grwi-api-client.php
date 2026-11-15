@@ -13,6 +13,12 @@ class GRWI_API_Client
 
     private bool $retrying_after_auth_failure = false;
 
+    /** Explicit administrator opt-in is required, including upgraded installations. */
+    public static function service_allowed(): bool
+    {
+        return (bool) get_option('grwi_service_consent', false);
+    }
+
     public function __construct()
     {
         self::migrate_stored_api_base();
@@ -43,7 +49,8 @@ class GRWI_API_Client
         $stored = (string) get_option('grwi_api_base_url', '');
         $candidate = self::canonical_api_base($stored !== '' ? $stored : GRWI_API_BASE);
 
-        if ($stored === '' || self::validate_api_base($candidate)) {
+        // Never probe an external endpoint before the administrator opts in.
+        if (! self::service_allowed() || $stored === '' || self::validate_api_base($candidate)) {
             return $candidate;
         }
 
@@ -57,6 +64,10 @@ class GRWI_API_Client
      */
     public static function validate_api_base(string $base): bool
     {
+        if (! self::service_allowed()) {
+            return false;
+        }
+
         $url = self::canonical_api_base($base) . '/wordpress/health';
         $response = wp_remote_head($url, [
             'timeout' => 8,
@@ -91,7 +102,6 @@ class GRWI_API_Client
         $base = preg_replace('#/wordpress(/anonymous)?.*$#', '', $base) ?: GRWI_API_BASE;
         $base = rtrim($base, '/');
 
-        $default = wp_parse_url(GRWI_API_BASE);
         $parsed = wp_parse_url($base);
         if (empty($parsed['host'])) {
             return GRWI_API_BASE;
@@ -103,14 +113,16 @@ class GRWI_API_Client
             return GRWI_API_BASE;
         }
 
-        $scheme = $parsed['scheme'] ?? ($default['scheme'] ?? 'https');
-        $port = isset($parsed['port']) ? ':' . (int) $parsed['port'] : '';
-
-        return $scheme . '://' . $host . $port . '/api/v1';
+        // API credentials must never be transmitted over HTTP or custom ports.
+        return 'https://' . $host . '/api/v1';
     }
 
     public function ensure_registered(bool $refresh_capabilities = true): bool
     {
+        if (! self::service_allowed()) {
+            return false;
+        }
+
         $site_id = (int) get_option('grwi_site_id', 0);
         $secret = (string) get_option('grwi_site_secret', '');
 
@@ -122,26 +134,39 @@ class GRWI_API_Client
             return true;
         }
 
+        if (! (bool) get_option('grwi_service_consent', false)) {
+            return false;
+        }
+
+        return $this->register_site();
+    }
+
+    /**
+     * Register after explicit setup, or renew an existing site's credentials.
+     * Keep the previous credentials until a complete replacement is received.
+     */
+    private function register_site(): bool
+    {
         $response = $this->request('POST', '/wordpress/anonymous/register', [
             'site_url' => home_url('/'),
             'plugin_version' => GRWI_VERSION,
         ]);
 
-        if (is_wp_error($response)) {
+        if (is_wp_error($response) || empty($response['site_id']) || empty($response['site_secret'])) {
             return false;
         }
 
-        if (! empty($response['site_id'])) {
-            update_option('grwi_site_id', (int) $response['site_id'], false);
+        $site_id = (int) $response['site_id'];
+        $secret = sanitize_text_field($response['site_secret']);
+        if ($site_id <= 0 || $secret === '') {
+            return false;
         }
 
-        if (! empty($response['site_secret'])) {
-            update_option('grwi_site_secret', sanitize_text_field($response['site_secret']), false);
-        }
-
+        update_option('grwi_site_id', $site_id, false);
+        update_option('grwi_site_secret', $secret, false);
         $this->store_capabilities($response);
 
-        return ! empty($response['site_id']);
+        return true;
     }
 
     public function refresh_capabilities(): bool
@@ -162,6 +187,10 @@ class GRWI_API_Client
             }
 
             return ! is_wp_error($capabilities);
+        }
+
+        if (! $this->is_registered()) {
+            return false;
         }
 
         $response = $this->request('GET', '/wordpress/anonymous/capabilities', null, $this->site_headers());
@@ -205,6 +234,11 @@ class GRWI_API_Client
      */
     public function create_widget(array $data)
     {
+        $data = GRWI_Config::sanitize_create($data);
+        if (is_wp_error($data)) {
+            return $data;
+        }
+
         if ($this->is_linked()) {
             $data['site_hostname'] = wp_parse_url(home_url('/'), PHP_URL_HOST);
             $data['site_id'] = (int) get_option('grwi_site_id', 0);
@@ -224,6 +258,10 @@ class GRWI_API_Client
     public function update_widget(string $embed_key, array $data)
     {
         $embed_key = sanitize_text_field($embed_key);
+        $data = GRWI_Config::sanitize_update($data);
+        if (is_wp_error($data)) {
+            return $data;
+        }
 
         if ($this->is_linked()) {
             return $this->integration_request(
@@ -634,7 +672,7 @@ class GRWI_API_Client
 
     public function is_linked(): bool
     {
-        return (bool) get_option('grwi_linked', false) && (string) get_option('grwi_api_token', '') !== '';
+        return self::service_allowed() && (bool) get_option('grwi_linked', false) && (string) get_option('grwi_api_token', '') !== '';
     }
 
     /**
@@ -642,7 +680,7 @@ class GRWI_API_Client
      */
     public function needs_reconnect(): bool
     {
-        return (bool) get_option('grwi_linked', false) && (string) get_option('grwi_api_token', '') === '';
+        return self::service_allowed() && (bool) get_option('grwi_linked', false) && (string) get_option('grwi_api_token', '') === '';
     }
 
     /**
@@ -672,7 +710,7 @@ class GRWI_API_Client
 
     public function is_registered(): bool
     {
-        return (int) get_option('grwi_site_id', 0) > 0
+        return self::service_allowed() && (int) get_option('grwi_site_id', 0) > 0
             && (string) get_option('grwi_site_secret', '') !== '';
     }
 
@@ -915,10 +953,17 @@ class GRWI_API_Client
      */
     private function request(string $method, string $path, ?array $body = null, array $extra_headers = [])
     {
+        // A denied/unconfigured installation must not contact the service,
+        // including via AJAX calls made without using the setup screen.
+        if (! self::service_allowed()) {
+            return new WP_Error('grwi_consent_required', __('Connect GR Widget from its setup screen before using the service.', 'gr-widget'));
+        }
+
         $url = self::canonical_api_base($this->api_base) . $path;
         $args = [
             'method' => $method,
             'timeout' => 20,
+            'redirection' => 0,
             'headers' => array_merge([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -942,6 +987,8 @@ class GRWI_API_Client
         if (! is_array($decoded)) {
             $decoded = ['error' => $raw !== '' ? $raw : __('Unexpected API response.', 'gr-widget')];
         }
+
+        $decoded = GRWI_Config::without_code_controls($decoded);
 
         if ($code === 404) {
             if (! $this->retrying_after_404) {
@@ -1200,15 +1247,15 @@ class GRWI_API_Client
 
     private function recover_site_credentials(): bool
     {
+        // Existing registrations remain connected after upgrading to opt-in setup.
+        // Never use credential recovery to register a new, unconsented site.
+        if (! $this->is_registered()) {
+            return false;
+        }
+
         $this->retrying_after_auth_failure = true;
-        $this->clear_site_credentials();
 
-        return $this->ensure_registered();
-    }
-
-    private function clear_site_credentials(): void
-    {
-        delete_option('grwi_site_secret');
+        return $this->register_site();
     }
 
     /**

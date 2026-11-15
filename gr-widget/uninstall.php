@@ -21,6 +21,7 @@ $grwi_options = [
     'grwi_remembered_places',
     'grwi_hidden_recent_place_ids',
     'grwi_wp_review_prompt',
+    'grwi_service_consent',
 ];
 
 foreach ($grwi_options as $grwi_option) {

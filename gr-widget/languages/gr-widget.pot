@@ -2,13 +2,2166 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: GR Widget – Google Reviews Widget 1.0.2\n"
-"Report-Msgid-Bugs-To: https://grwidget.com\n"
-"POT-Creation-Date: 2026-06-25 00:00+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: GR Widget – Google Reviews Widget 1.2.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/gr-widget\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-11T23:09:39+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gr-widget\n"
+
+#. Plugin Name of the plugin
+#: gr-widget.php
+msgid "GR Widget – Google Reviews Widget"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: gr-widget.php
+msgid "https://grwidget.com/blog/wordpress"
+msgstr ""
+
+#. Description of the plugin
+#: gr-widget.php
+msgid "Embed Google reviews with a shortcode or block. 34 layouts, no API keys. Link a free account for 22 of them."
+msgstr ""
+
+#. Author of the plugin
+#: gr-widget.php
+#: includes/class-grwi-admin.php:89
+#: includes/class-grwi-admin.php:90
+#: includes/class-grwi-blocks.php:21
+msgid "GR Widget"
+msgstr ""
+
+#. Author URI of the plugin
+#: gr-widget.php
+msgid "https://grwidget.com"
+msgstr ""
+
+#: includes/class-grwi-admin.php:172
+msgid "Searching…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:173
+msgid "No businesses found."
+msgstr ""
+
+#: includes/class-grwi-admin.php:174
+msgid "Search failed. Try again."
+msgstr ""
+
+#: includes/class-grwi-admin.php:175
+#: includes/class-grwi-admin.php:776
+msgid "Business search is temporarily unavailable. Please try again later."
+msgstr ""
+
+#: includes/class-grwi-admin.php:176
+msgid "Remove business"
+msgstr ""
+
+#: includes/class-grwi-admin.php:177
+#: includes/class-grwi-customize.php:197
+msgid "Copied!"
+msgstr ""
+
+#: includes/class-grwi-admin.php:178
+msgid "Shortcode copied to your clipboard."
+msgstr ""
+
+#: includes/class-grwi-admin.php:179
+#: includes/class-grwi-customize.php:198
+#: includes/views/admin-page.php:589
+#: includes/views/customize-page.php:272
+#: includes/views/customize-page.php:289
+msgid "Copy"
+msgstr ""
+
+#: includes/class-grwi-admin.php:180
+#: includes/views/admin-page.php:499
+#: includes/views/admin-page.php:500
+#: includes/views/admin-page.php:524
+msgid "Copy shortcode"
+msgstr ""
+
+#. translators: %s: widget name.
+#: includes/class-grwi-admin.php:182
+#, php-format
+msgid "Delete “%s”? This will remove the widget from pages where its shortcode or block is used."
+msgstr ""
+
+#: includes/class-grwi-admin.php:183
+msgid "this widget"
+msgstr ""
+
+#: includes/class-grwi-admin.php:184
+msgid "Could not duplicate widget."
+msgstr ""
+
+#. translators: %d: number of widgets.
+#. translators: %d: number of widgets on this site.
+#: includes/class-grwi-admin.php:186
+#: includes/views/admin-page.php:184
+#, php-format
+msgid "%d widget on this site"
+msgid_plural "%d widgets on this site"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of widgets.
+#: includes/class-grwi-admin.php:188
+#, php-format
+msgid "%d widgets on this site"
+msgstr ""
+
+#: includes/class-grwi-admin.php:189
+msgid "Select a business above before creating a widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:190
+#: includes/views/admin-page.php:939
+msgid "Select a business to continue"
+msgstr ""
+
+#: includes/class-grwi-admin.php:191
+#: includes/class-grwi-customize.php:219
+msgid "Upgrade"
+msgstr ""
+
+#: includes/class-grwi-admin.php:192
+msgid "This layout is available with a 7-day free trial on GRWidget.com."
+msgstr ""
+
+#: includes/class-grwi-admin.php:193
+msgid "Preview only — start a 7-day free trial on GRWidget.com to use this layout."
+msgstr ""
+
+#: includes/class-grwi-admin.php:194
+msgid "Site plan required"
+msgstr ""
+
+#: includes/class-grwi-admin.php:195
+msgid "Business plan required"
+msgstr ""
+
+#: includes/class-grwi-admin.php:196
+msgid "Agency plan required"
+msgstr ""
+
+#: includes/class-grwi-admin.php:197
+msgid "Free account required"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:199
+#, php-format
+msgid "Link a free account to use %s. No card required."
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:201
+#, php-format
+msgid "Start a 7-day trial to use %s immediately."
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:203
+#, php-format
+msgid "Upgrade to Site to use %s."
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:205
+#, php-format
+msgid "View Site plan to use %s"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:207
+#, php-format
+msgid "View Business plan to use %s"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:209
+#, php-format
+msgid "View Agency plan to use %s"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:211
+#, php-format
+msgid "Link free account to use %s"
+msgstr ""
+
+#: includes/class-grwi-admin.php:212
+#: includes/views/admin-page.php:1002
+msgid "Choose an available layout"
+msgstr ""
+
+#: includes/class-grwi-admin.php:213
+msgid "7-day trial · No charge today · Card required at checkout"
+msgstr ""
+
+#: includes/class-grwi-admin.php:214
+msgid "Free · About 20 seconds"
+msgstr ""
+
+#: includes/class-grwi-admin.php:215
+msgid "Existing widgets remain unchanged"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:217
+#, php-format
+msgid "Previewing: %s"
+msgstr ""
+
+#: includes/class-grwi-admin.php:218
+#: includes/views/admin-page.php:740
+msgid "PREVIEWING · FREE ACCOUNT REQUIRED"
+msgstr ""
+
+#: includes/class-grwi-admin.php:219
+#: includes/views/admin-page.php:743
+msgid "PREVIEWING · SITE PLAN"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/class-grwi-admin.php:221
+#, php-format
+msgid "%s selected for preview"
+msgstr ""
+
+#. translators: %d: number of other layouts unlocked by linking
+#: includes/class-grwi-admin.php:223
+#, php-format
+msgid "Link a free account to unlock this and %d other layouts."
+msgstr ""
+
+#: includes/class-grwi-admin.php:224
+msgid "Link a free account to unlock this and 1 other layout."
+msgstr ""
+
+#: includes/class-grwi-admin.php:225
+msgid "Link a free account to unlock this layout."
+msgstr ""
+
+#. translators: %d: number of other Site layouts
+#: includes/class-grwi-admin.php:227
+#, php-format
+msgid "Start a 7-day trial to use this and %d other layouts immediately."
+msgstr ""
+
+#: includes/class-grwi-admin.php:228
+msgid "Start a 7-day trial to use this and 1 other layout immediately."
+msgstr ""
+
+#: includes/class-grwi-admin.php:229
+msgid "Start a 7-day trial to use this layout immediately."
+msgstr ""
+
+#. translators: %s: layout name
+#. translators: %s: layout name.
+#. translators: %s: feature name.
+#: includes/class-grwi-admin.php:231
+#: includes/class-grwi-customize.php:226
+#: includes/class-grwi-customize.php:245
+#, php-format
+msgid "Unlock %s with a free account"
+msgstr ""
+
+#: includes/class-grwi-admin.php:232
+#: includes/class-grwi-customize.php:227
+msgid "Link a free account to unlock this layout. Free includes 22 layouts; Site unlocks 31 with up to 30 reviews, reviewer photos, filters and bi-weekly syncing."
+msgstr ""
+
+#: includes/class-grwi-admin.php:233
+#: includes/class-grwi-admin.php:238
+#: includes/class-grwi-customize.php:228
+#: includes/class-grwi-customize.php:280
+#: includes/class-grwi-upgrade.php:110
+#: includes/views/admin-page.php:702
+msgid "Link free account"
+msgstr ""
+
+#: includes/class-grwi-admin.php:234
+#: includes/class-grwi-admin.php:248
+#: includes/class-grwi-customize.php:229
+#: includes/class-grwi-customize.php:237
+msgid "Continue with current layout"
+msgstr ""
+
+#: includes/class-grwi-admin.php:235
+#: includes/class-grwi-customize.php:230
+msgid "No payment required"
+msgstr ""
+
+#: includes/class-grwi-admin.php:236
+msgid "Widget limit reached"
+msgstr ""
+
+#: includes/class-grwi-admin.php:237
+msgid "Link a free GR Widget account to create more widgets and unlock extra layouts."
+msgstr ""
+
+#: includes/class-grwi-admin.php:239
+#: includes/class-grwi-upgrade.php:60
+msgid "Upgrade on GRWidget.com for more widgets and every layout."
+msgstr ""
+
+#: includes/class-grwi-admin.php:240
+#: includes/class-grwi-upgrade.php:69
+#: includes/views/admin-page.php:712
+msgid "Start free trial"
+msgstr ""
+
+#: includes/class-grwi-admin.php:241
+#: includes/class-grwi-customize.php:243
+msgid "Not now"
+msgstr ""
+
+#. translators: %s: layout name
+#. translators: %s: layout name.
+#: includes/class-grwi-admin.php:243
+#: includes/class-grwi-customize.php:232
+#, php-format
+msgid "Unlock %s with Site"
+msgstr ""
+
+#. translators: %s: layout name.
+#: includes/class-grwi-admin.php:245
+#: includes/class-grwi-customize.php:234
+#, php-format
+msgid "Display your reviews using the %s. Site also includes 31 layouts, up to 30 reviews, reviewer photos, filters, bi-weekly syncing and full design control."
+msgstr ""
+
+#: includes/class-grwi-admin.php:246
+#: includes/class-grwi-customize.php:235
+#: includes/views/admin-page.php:1268
+msgid "$0 today. Your first payment of $5.99 is after 7 days unless you cancel."
+msgstr ""
+
+#: includes/class-grwi-admin.php:247
+#: includes/class-grwi-customize.php:236
+#: includes/class-grwi-customize.php:293
+#: includes/class-grwi-customize.php:303
+#: includes/views/admin-page.php:291
+#: includes/views/admin-page.php:1271
+msgid "Start 7-day Site trial"
+msgstr ""
+
+#: includes/class-grwi-admin.php:249
+#: includes/class-grwi-customize.php:238
+msgid "Cancel anytime during the trial"
+msgstr ""
+
+#: includes/class-grwi-admin.php:250
+#: includes/class-grwi-customize.php:252
+msgid "Trial eligibility will be confirmed before payment."
+msgstr ""
+
+#: includes/class-grwi-admin.php:251
+#: includes/class-grwi-customize.php:253
+#: includes/class-grwi-customize.php:254
+#: includes/views/admin-page.php:1267
+#: includes/views/admin-page.php:1286
+msgid "Charged at checkout. Cancel anytime."
+msgstr ""
+
+#. translators: %s: required plan name.
+#: includes/class-grwi-admin.php:253
+#, php-format
+msgid "Preview and customise it freely. You’ll need %s to publish this design."
+msgstr ""
+
+#. translators: %s: required plan name.
+#: includes/class-grwi-admin.php:255
+#: includes/class-grwi-customize.php:263
+#, php-format
+msgid "Your design uses %s features"
+msgstr ""
+
+#. translators: 1: list of premium features, 2: required plan name.
+#: includes/class-grwi-admin.php:257
+#: includes/class-grwi-customize.php:266
+#, php-format
+msgid "%1$s require %2$s to publish. Keep designing for free—your current live widget won’t change."
+msgstr ""
+
+#. translators: 1: premium feature name, 2: required plan name.
+#: includes/class-grwi-admin.php:259
+#: includes/class-grwi-customize.php:268
+#, php-format
+msgid "%1$s requires %2$s to publish. Keep designing for free—your current live widget won’t change."
+msgstr ""
+
+#: includes/class-grwi-admin.php:260
+#: includes/class-grwi-customize.php:259
+msgid "Continue editing"
+msgstr ""
+
+#: includes/class-grwi-admin.php:261
+#: includes/class-grwi-customize.php:282
+msgid "Branding hidden in this preview"
+msgstr ""
+
+#: includes/class-grwi-admin.php:262
+#: includes/class-grwi-customize.php:283
+msgid "Upgrade to Site to publish your widget without the GR Widget link."
+msgstr ""
+
+#: includes/class-grwi-admin.php:263
+#: includes/class-grwi-customize.php:284
+msgid "The GR Widget link is hidden in this preview. You can restore it anytime."
+msgstr ""
+
+#: includes/class-grwi-admin.php:264
+#: includes/class-grwi-customize.php:285
+msgid "Start your 7-day Site trial"
+msgstr ""
+
+#: includes/class-grwi-admin.php:265
+#: includes/class-grwi-customize.php:260
+msgid "Start my free trial"
+msgstr ""
+
+#: includes/class-grwi-admin.php:266
+#: includes/class-grwi-customize.php:261
+msgid "Draft saved. Your current live widget is unchanged."
+msgstr ""
+
+#. translators: %s: widget design name.
+#: includes/class-grwi-admin.php:268
+#, php-format
+msgid "Your %s design is ready"
+msgstr ""
+
+#: includes/class-grwi-admin.php:269
+#: includes/class-grwi-customize.php:297
+#: includes/class-grwi-customize.php:307
+#: includes/views/admin-page.php:292
+#: includes/views/admin-page.php:1264
+#: includes/views/admin-page.php:1270
+#: includes/views/customize-page.php:238
+msgid "Upgrade to Site"
+msgstr ""
+
+#: includes/class-grwi-admin.php:270
+msgid "Unlink this site?"
+msgstr ""
+
+#: includes/class-grwi-admin.php:271
+msgid "Unlink this site from your GR Widget account? Your widgets stay in this plugin; link again later to manage them in the web builder."
+msgstr ""
+
+#: includes/class-grwi-admin.php:272
+#: includes/views/admin-page.php:1122
+msgid "Unlink account"
+msgstr ""
+
+#: includes/class-grwi-admin.php:273
+#: includes/class-grwi-customize.php:194
+#: includes/class-grwi-customize.php:208
+#: includes/views/admin-page.php:1473
+#: includes/views/customize-page.php:345
+#: includes/views/customize-page.php:370
+msgid "Cancel"
+msgstr ""
+
+#: includes/class-grwi-admin.php:274
+#: includes/views/admin-page.php:1018
+msgid "Creating widget…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:275
+#: includes/views/admin-page.php:997
+msgid "Create widget"
+msgstr ""
+
+#: includes/class-grwi-admin.php:276
+#: includes/class-grwi-admin.php:1095
+msgid "That layout is locked on your current plan. Choose an available layout or unlock it first."
+msgstr ""
+
+#: includes/class-grwi-admin.php:277
+#: includes/views/admin-page.php:980
+#: includes/views/customize-page.php:191
+#: includes/views/customize-page.php:193
+msgid "Live preview"
+msgstr ""
+
+#: includes/class-grwi-admin.php:278
+#: includes/views/admin-page.php:596
+msgid "Customize"
+msgstr ""
+
+#: includes/class-grwi-admin.php:279
+msgid "Edit"
+msgstr ""
+
+#: includes/class-grwi-admin.php:280
+#: includes/views/admin-page.php:493
+msgid "Preview"
+msgstr ""
+
+#: includes/class-grwi-admin.php:281
+#: includes/class-grwi-customize.php:196
+msgid "Could not load preview."
+msgstr ""
+
+#: includes/class-grwi-admin.php:282
+msgid "Live preview unavailable — showing layout preview."
+msgstr ""
+
+#: includes/class-grwi-admin.php:283
+#: includes/views/admin-page.php:656
+msgid "Syncing reviews in the background"
+msgstr ""
+
+#: includes/class-grwi-admin.php:284
+#: includes/views/admin-page.php:657
+msgid "You can continue building your widget — live review data will appear in the preview shortly."
+msgstr ""
+
+#: includes/class-grwi-admin.php:285
+msgid "Could not sync reviews"
+msgstr ""
+
+#: includes/class-grwi-admin.php:286
+msgid "Review sync did not finish. You can keep building with demo reviews, or try again."
+msgstr ""
+
+#: includes/class-grwi-admin.php:287
+msgid "Your reviews are synced and ready"
+msgstr ""
+
+#: includes/class-grwi-admin.php:288
+#: includes/views/admin-page.php:981
+msgid "Preview uses your business name and rating with demo reviews until sync completes."
+msgstr ""
+
+#: includes/class-grwi-admin.php:289
+#: includes/class-grwi-customize.php:215
+#: includes/views/customize-page.php:194
+msgid "Showing your synced Google reviews."
+msgstr ""
+
+#: includes/class-grwi-admin.php:290
+msgid "Delete"
+msgstr ""
+
+#: includes/class-grwi-admin.php:291
+msgid "Delete this widget permanently? Shortcodes and blocks using it will stop working."
+msgstr ""
+
+#: includes/class-grwi-admin.php:292
+msgid "Could not delete widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:293
+msgid "Widget deleted."
+msgstr ""
+
+#: includes/class-grwi-admin.php:294
+msgid "Deleting…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:295
+msgid "Could not create widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:296
+#: includes/views/admin-page.php:115
+#: includes/views/customize-page.php:58
+msgid "Widget created successfully."
+msgstr ""
+
+#: includes/class-grwi-admin.php:297
+msgid "Opening GRWidget.com…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:298
+msgid "Waiting for you to finish in the popup…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:299
+msgid "Finishing connection…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:300
+msgid "Connected! Reloading…"
+msgstr ""
+
+#: includes/class-grwi-admin.php:301
+msgid "Could not start account connect. Try again."
+msgstr ""
+
+#: includes/class-grwi-admin.php:302
+msgid "Pop-up blocked. Allow pop-ups for this site and try again."
+msgstr ""
+
+#: includes/class-grwi-admin.php:304
+#: includes/views/admin-page.php:1414
+#: includes/views/customize-page.php:262
+#: includes/views/customize-page.php:311
+msgid "Close"
+msgstr ""
+
+#: includes/class-grwi-admin.php:378
+msgid "API token is required."
+msgstr ""
+
+#: includes/class-grwi-admin.php:420
+#: includes/class-grwi-admin.php:439
+#: includes/class-grwi-admin.php:466
+#: includes/class-grwi-admin.php:593
+#: includes/class-grwi-admin.php:677
+#: includes/class-grwi-admin.php:713
+#: includes/class-grwi-admin.php:733
+#: includes/class-grwi-admin.php:758
+#: includes/class-grwi-admin.php:963
+#: includes/class-grwi-admin.php:1006
+#: includes/class-grwi-admin.php:1034
+#: includes/class-grwi-admin.php:1144
+#: includes/class-grwi-admin.php:1166
+#: includes/class-grwi-admin.php:1190
+#: includes/class-grwi-admin.php:1288
+#: includes/class-grwi-customize.php:635
+#: includes/class-grwi-customize.php:663
+#: includes/class-grwi-customize.php:784
+msgid "Forbidden."
+msgstr ""
+
+#: includes/class-grwi-admin.php:444
+#: includes/class-grwi-admin.php:471
+msgid "Missing connect token."
+msgstr ""
+
+#: includes/class-grwi-admin.php:489
+msgid "You do not have permission to check this widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:497
+msgid "Enter a full page address, starting with http:// or https://."
+msgstr ""
+
+#: includes/class-grwi-admin.php:516
+msgid "You do not have permission to open this guide."
+msgstr ""
+
+#: includes/class-grwi-admin.php:522
+msgid "Choose where you added the widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:539
+msgid "You do not have permission to contact support."
+msgstr ""
+
+#: includes/class-grwi-admin.php:545
+msgid "Choose a widget first."
+msgstr ""
+
+#: includes/class-grwi-admin.php:682
+msgid "Enter at least 3 characters."
+msgstr ""
+
+#: includes/class-grwi-admin.php:687
+msgid "Could not register this site with GRWidget.com."
+msgstr ""
+
+#: includes/class-grwi-admin.php:745
+#: includes/class-grwi-admin.php:970
+msgid "Place details required."
+msgstr ""
+
+#: includes/class-grwi-admin.php:763
+#: includes/class-grwi-admin.php:1011
+msgid "Place ID required."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1067
+msgid "Select a business from the search results before creating a widget."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1149
+msgid "Unknown choice."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1171
+#: includes/class-grwi-admin.php:1195
+#: includes/class-grwi-api-client.php:380
+#: includes/class-grwi-customize.php:640
+#: includes/class-grwi-customize.php:668
+msgid "Missing widget key."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1213
+msgid "Could not read the source widget place."
+msgstr ""
+
+#. translators: %s: original widget name
+#. translators: %s: business name
+#: includes/class-grwi-admin.php:1232
+#: includes/class-grwi-admin.php:1237
+#, php-format
+msgid "Copy of %s"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1294
+#: includes/class-grwi-admin.php:1303
+msgid "No widgets selected."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1327
+msgid "Could not delete the selected widgets."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1347
+msgid "Set up GR Widget"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1348
+msgid "GR Widget uses GRWidget.com (operated by EXTHUS LTD) to find Google businesses, host and synchronise reviews, create widgets, and render them on your website. A GRWidget.com account is not required to start."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1349
+msgid "When you connect, this plugin sends your website URL and plugin version to GRWidget.com to register your site. When you choose to search for businesses or create widgets, the service receives your search terms, selected business information, and widget settings. Pages with published GR Widget embeds load the hosted script and send the visitor request to GRWidget.com."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1350
+msgid "After connecting, previews and published widgets may load Google Fonts and Google-hosted reviewer images when those options are selected. Those browser requests disclose the IP address and browser information to the provider. Use the inherited font and disable photos to avoid these optional requests."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1352
+msgid "Privacy policy"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1354
+msgid "Terms of service"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1356
+msgid "Google privacy policy"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1359
+msgid "Could not connect to GRWidget.com. Check connectivity and try again."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1364
+msgid "Connect this website to GRWidget.com"
+msgstr ""
+
+#: includes/class-grwi-admin.php:1366
+msgid "Activating this plugin alone does not register your site or contact GRWidget.com. Connecting is optional until you want to use the hosted widget features."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1367
+msgid "If you used an earlier version without this consent step, your saved widgets and connection details are retained. Confirm the connection here to resume the hosted service."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1403
+msgid "Could not reach GRWidget.com right now. Check your network connection and refresh this page. Existing widgets and shortcodes on your site will keep working; creating new widgets requires a connection."
+msgstr ""
+
+#: includes/class-grwi-admin.php:1461
+#: includes/views/admin-page.php:904
+msgid "Layouts"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:223
+#: includes/class-grwi-api-client.php:414
+#: includes/class-grwi-api-client.php:551
+#: includes/class-grwi-api-client.php:580
+#: includes/class-grwi-api-client.php:611
+#: includes/class-grwi-api-client.php:646
+msgid "Site is not registered yet."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:626
+msgid "Connect succeeded but no API token was returned."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:757
+msgid "Rating Badge"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:758
+msgid "Inline badge"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:759
+msgid "Compact badge"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:760
+msgid "Review request"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:761
+msgid "Reviews button"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:762
+msgid "Avatar review badge"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:763
+msgid "Inline rating & reviews"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:764
+msgid "Essential rating"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:765
+msgid "Text rating"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:766
+msgid "Stacked rating"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:767
+msgid "Micro rating strip"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:768
+msgid "List feed"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:769
+msgid "Slider feed"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:770
+msgid "Grid feed"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:771
+msgid "Masonry feed"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:772
+msgid "Carousel feed"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:773
+msgid "Review ribbon"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:774
+msgid "Mini review slider"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:775
+msgid "Reputation snapshot"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:776
+msgid "Review mosaic"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:777
+msgid "Photo spotlight"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:778
+msgid "Classic Carousel"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:779
+msgid "Classic Slider"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:780
+msgid "Classic List"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:781
+msgid "Classic Grid"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:782
+msgid "Classic Masonry"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:783
+msgid "Classic sticker"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:784
+msgid "Tag sticker"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:785
+msgid "Bold sticker"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:786
+msgid "Ribbon sticker"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:787
+msgid "Pill sticker"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:825
+#: includes/views/admin-page.php:9
+#: includes/views/admin-page.php:40
+msgid "Unlinked"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:845
+#: includes/views/admin-page.php:880
+msgid "Badges & ratings"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:850
+msgid "Collect reviews"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:855
+#: includes/views/admin-page.php:881
+msgid "Carousels & sliders"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:860
+#: includes/views/admin-page.php:882
+msgid "Grids & lists"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:865
+#: includes/views/admin-page.php:883
+msgid "Review highlights"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:870
+#: includes/views/admin-page.php:884
+msgid "Stickers"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:918
+msgid "Site is not linked to a GR Widget account."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:954
+msgid "Connect GR Widget from its setup screen before using the service."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:983
+msgid "Unexpected API response."
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/class-grwi-api-client.php:1044
+#, php-format
+msgid "API request failed (HTTP %d)."
+msgstr ""
+
+#. translators: 1: HTTP status code, 2: error message from API.
+#: includes/class-grwi-api-client.php:1050
+#, php-format
+msgid "API error (HTTP %1$d): %2$s"
+msgstr ""
+
+#: includes/class-grwi-api-client.php:1122
+msgid "Could not reach GR Widget right now. Try again."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:1127
+msgid "This site is linked to a GR Widget account, but the connection needs to be refreshed. Reconnect to load your widgets. Existing embeds on your site keep working."
+msgstr ""
+
+#: includes/class-grwi-api-client.php:1195
+msgid "API token required."
+msgstr ""
+
+#: includes/class-grwi-blocks.php:22
+msgid "Embed a Google review widget from GRWidget.com."
+msgstr ""
+
+#: includes/class-grwi-config.php:30
+msgid "Custom CSS, JavaScript and PHP cannot be saved through the WordPress plugin."
+msgstr ""
+
+#: includes/class-grwi-config.php:163
+msgid "Some widget settings are invalid. Refresh the editor and check your selections."
+msgstr ""
+
+#: includes/class-grwi-customize.php:78
+#: includes/class-grwi-customize.php:79
+msgid "Customize widget"
+msgstr ""
+
+#: includes/class-grwi-customize.php:184
+msgid "Widget styling saved."
+msgstr ""
+
+#: includes/class-grwi-customize.php:185
+msgid "Could not save widget styling."
+msgstr ""
+
+#: includes/class-grwi-customize.php:186
+msgid "Saving…"
+msgstr ""
+
+#: includes/class-grwi-customize.php:187
+#: includes/views/customize-page.php:97
+msgid "Save changes"
+msgstr ""
+
+#: includes/class-grwi-customize.php:188
+#: includes/views/customize-page.php:88
+msgid "Saved"
+msgstr ""
+
+#: includes/class-grwi-customize.php:189
+#: includes/class-grwi-customize.php:190
+#: includes/views/customize-page.php:363
+msgid "Unsaved changes"
+msgstr ""
+
+#: includes/class-grwi-customize.php:191
+#: includes/views/customize-page.php:364
+msgid "You have unsaved changes. Save before leaving, or discard them."
+msgstr ""
+
+#: includes/class-grwi-customize.php:192
+#: includes/views/customize-page.php:373
+msgid "Save & leave"
+msgstr ""
+
+#: includes/class-grwi-customize.php:193
+#: includes/views/customize-page.php:367
+msgid "Leave without saving"
+msgstr ""
+
+#: includes/class-grwi-customize.php:195
+#: includes/views/admin-page.php:1450
+msgid "Loading preview…"
+msgstr ""
+
+#: includes/class-grwi-customize.php:199
+#: includes/views/customize-page.php:66
+#: includes/views/customize-page.php:72
+msgid "All widgets"
+msgstr ""
+
+#: includes/class-grwi-customize.php:200
+msgid "Start 7-day free trial for advanced customizations"
+msgstr ""
+
+#: includes/class-grwi-customize.php:201
+msgid "Margins, element order, and advanced layout controls — try full features free for 7 days. Cancel before the trial ends and you won’t be charged."
+msgstr ""
+
+#: includes/class-grwi-customize.php:202
+#: includes/views/customize-page.php:149
+#: includes/views/customize-page.php:154
+msgid "Help & feedback"
+msgstr ""
+
+#: includes/class-grwi-customize.php:203
+#: includes/views/customize-page.php:331
+msgid "Report a bug"
+msgstr ""
+
+#: includes/class-grwi-customize.php:204
+#: includes/views/customize-page.php:332
+msgid "Describe what went wrong. We include your widget key and builder section when possible."
+msgstr ""
+
+#: includes/class-grwi-customize.php:205
+msgid "Sending…"
+msgstr ""
+
+#: includes/class-grwi-customize.php:206
+msgid "Thanks — your bug report was sent. Check your email for a follow-up link."
+msgstr ""
+
+#: includes/class-grwi-customize.php:207
+msgid "Could not send the bug report. Please try again or post in the community."
+msgstr ""
+
+#: includes/class-grwi-customize.php:209
+#: includes/views/customize-page.php:346
+msgid "Send report"
+msgstr ""
+
+#: includes/class-grwi-customize.php:210
+#: includes/views/customize-page.php:336
+msgid "What happened?"
+msgstr ""
+
+#: includes/class-grwi-customize.php:211
+#: includes/views/customize-page.php:340
+msgid "Email"
+msgstr ""
+
+#: includes/class-grwi-customize.php:212
+msgid "Email (required)"
+msgstr ""
+
+#: includes/class-grwi-customize.php:213
+#: includes/views/admin-page.php:162
+#: includes/views/admin-page.php:163
+#: includes/views/admin-page.php:947
+#: includes/views/admin-page.php:1400
+#: includes/views/customize-page.php:59
+#: includes/views/customize-page.php:242
+msgid "Dismiss"
+msgstr ""
+
+#: includes/class-grwi-customize.php:214
+#: includes/views/customize-page.php:90
+#: includes/views/customize-page.php:94
+#: includes/views/customize-page.php:261
+msgid "Install widget"
+msgstr ""
+
+#: includes/class-grwi-customize.php:216
+msgid "Unlock 31 layouts with Site"
+msgstr ""
+
+#: includes/class-grwi-customize.php:217
+msgid "Link Free for 17 more layouts · Site unlocks 31"
+msgstr ""
+
+#: includes/class-grwi-customize.php:218
+msgid "Selected"
+msgstr ""
+
+#: includes/class-grwi-customize.php:220
+#: includes/views/admin-page.php:699
+msgid "FREE WITH ACCOUNT"
+msgstr ""
+
+#: includes/class-grwi-customize.php:221
+#: includes/class-grwi-customize.php:223
+#: includes/class-grwi-customize.php:299
+#: includes/views/admin-page.php:709
+msgid "SITE PLAN"
+msgstr ""
+
+#: includes/class-grwi-customize.php:222
+#: includes/class-grwi-customize.php:224
+#: includes/class-grwi-customize.php:300
+#: includes/views/admin-page.php:704
+msgid "BUSINESS PLAN"
+msgstr ""
+
+#. translators: %s: widget name.
+#. translators: %s: layout label (e.g. Rating Badge)
+#: includes/class-grwi-customize.php:240
+#: includes/views/customize-page.php:37
+#, php-format
+msgid "%s · Editing"
+msgstr ""
+
+#: includes/class-grwi-customize.php:241
+#: includes/views/admin-page.php:1093
+#: includes/views/admin-page.php:1324
+msgid "Site"
+msgstr ""
+
+#: includes/class-grwi-customize.php:242
+#: includes/views/admin-page.php:1325
+msgid "Business"
+msgstr ""
+
+#: includes/class-grwi-customize.php:246
+msgid "Link a free GR Widget account to start a trial and unlock premium features."
+msgstr ""
+
+#. translators: %s: plan name.
+#: includes/class-grwi-customize.php:248
+#, php-format
+msgid "Start a 7-day free trial of %s to unlock this feature and premium tools."
+msgstr ""
+
+#. translators: %s: plan name.
+#: includes/class-grwi-customize.php:250
+#, php-format
+msgid "Upgrade to %s to unlock this feature."
+msgstr ""
+
+#: includes/class-grwi-customize.php:251
+#: includes/views/admin-page.php:1287
+msgid "$0 today. Your first payment of $14.99 is after 7 days unless you cancel."
+msgstr ""
+
+#. translators: %s: required plan name.
+#: includes/class-grwi-customize.php:256
+#, php-format
+msgid "Preview freely — %s is required to publish"
+msgstr ""
+
+#: includes/class-grwi-customize.php:257
+msgid "Agency"
+msgstr ""
+
+#: includes/class-grwi-customize.php:258
+msgid "AGENCY"
+msgstr ""
+
+#: includes/class-grwi-customize.php:264
+msgid "Your design requires Business"
+msgstr ""
+
+#. translators: %s: plan name.
+#: includes/class-grwi-customize.php:270
+#: includes/class-grwi-customize.php:290
+#, php-format
+msgid "Upgrade to %s & publish"
+msgstr ""
+
+#: includes/class-grwi-customize.php:271
+#: includes/class-grwi-customize.php:288
+#: includes/views/customize-page.php:101
+msgid "Publish changes"
+msgstr ""
+
+#: includes/class-grwi-customize.php:272
+msgid "Link free account & publish"
+msgstr ""
+
+#: includes/class-grwi-customize.php:273
+msgid "Link a free account to publish this layout"
+msgstr ""
+
+#: includes/class-grwi-customize.php:274
+msgid "Link a free account to publish"
+msgstr ""
+
+#. translators: %s: layout name.
+#: includes/class-grwi-customize.php:276
+#, php-format
+msgid "%s is included free when you link a GR Widget account. Keep designing—your current live widget won’t change."
+msgstr ""
+
+#. translators: %d: maximum number of reviews.
+#: includes/class-grwi-customize.php:278
+#, php-format
+msgid "Link a free account to show up to %d reviews. Keep designing—your current live widget won’t change."
+msgstr ""
+
+#: includes/class-grwi-customize.php:279
+msgid "Free to link · No card required · Returns you to WordPress"
+msgstr ""
+
+#: includes/class-grwi-customize.php:281
+msgid "See what linking unlocks"
+msgstr ""
+
+#: includes/class-grwi-customize.php:286
+#: includes/views/customize-page.php:229
+msgid "View included features"
+msgstr ""
+
+#: includes/class-grwi-customize.php:287
+#: includes/views/customize-page.php:97
+msgid "Save draft"
+msgstr ""
+
+#: includes/class-grwi-customize.php:291
+#: includes/class-grwi-customize.php:295
+msgid "Make every widget match your brand"
+msgstr ""
+
+#: includes/class-grwi-customize.php:292
+msgid "Try custom colours, typography, spacing, borders, and labels free for 7 days on Site."
+msgstr ""
+
+#: includes/class-grwi-customize.php:294
+#: includes/class-grwi-customize.php:304
+msgid "Then $5.99/month · Cancel anytime"
+msgstr ""
+
+#: includes/class-grwi-customize.php:296
+msgid "Unlock custom colours, typography, spacing, borders, and labels with Site."
+msgstr ""
+
+#: includes/class-grwi-customize.php:298
+#: includes/class-grwi-customize.php:308
+msgid "From $5.99/month · Cancel anytime"
+msgstr ""
+
+#: includes/class-grwi-customize.php:301
+#: includes/class-grwi-customize.php:305
+msgid "Unlock review filters and sorting with Site"
+msgstr ""
+
+#: includes/class-grwi-customize.php:302
+#: includes/class-grwi-customize.php:306
+msgid "Choose which reviews appear using star ratings, keywords and reviewer filters, and sort them by newest, rating or a custom order. Site also includes reviewer profile photos, up to 30 reviews and bi-weekly syncing."
+msgstr ""
+
+#: includes/class-grwi-customize.php:309
+#: includes/class-grwi-customize.php:313
+msgid "Unlock AI Summary"
+msgstr ""
+
+#: includes/class-grwi-customize.php:310
+msgid "Try an AI-written review overview on your feed free for 7 days."
+msgstr ""
+
+#: includes/class-grwi-customize.php:311
+#: includes/views/admin-page.php:295
+#: includes/views/admin-page.php:1290
+msgid "Start 7-day Business trial"
+msgstr ""
+
+#: includes/class-grwi-customize.php:312
+msgid "Then $14.99/month · Cancel anytime"
+msgstr ""
+
+#: includes/class-grwi-customize.php:314
+msgid "Add an AI-written review overview to your feed with Business."
+msgstr ""
+
+#: includes/class-grwi-customize.php:315
+#: includes/views/admin-page.php:296
+#: includes/views/admin-page.php:1283
+#: includes/views/admin-page.php:1289
+msgid "Upgrade to Business"
+msgstr ""
+
+#: includes/class-grwi-customize.php:316
+msgid "From $14.99/month · Cancel anytime"
+msgstr ""
+
+#: includes/class-grwi-customize.php:389
+msgid "Settings"
+msgstr ""
+
+#: includes/class-grwi-customize.php:390
+msgid "Placement, spacing, and structured data"
+msgstr ""
+
+#: includes/class-grwi-customize.php:549
+#: includes/views/admin-page.php:966
+msgid "Layout"
+msgstr ""
+
+#: includes/class-grwi-customize.php:550
+msgid "Choose a layout to get started with"
+msgstr ""
+
+#: includes/class-grwi-customize.php:685
+msgid "Invalid save mode."
+msgstr ""
+
+#: includes/class-grwi-customize.php:693
+msgid "Invalid publish option."
+msgstr ""
+
+#: includes/class-grwi-customize.php:776
+#: includes/views/install-check.php:32
+#: assets/block.js:49
+msgid "Widget"
+msgstr ""
+
+#: includes/class-grwi-customize.php:794
+msgid "Please describe what went wrong."
+msgstr ""
+
+#: includes/class-grwi-customize.php:798
+msgid "A valid email is required so we can follow up."
+msgstr ""
+
+#: includes/class-grwi-customize.php:817
+msgid "Thanks — your bug report was sent."
+msgstr ""
+
+#. translators: %d: included widget allowance on the current plan.
+#. translators: %d: included widget allowance while unlinked.
+#: includes/class-grwi-upgrade.php:52
+#: includes/class-grwi-upgrade.php:79
+#, php-format
+msgid "You’ve used your %d included widget"
+msgid_plural "You’ve used your %d included widgets"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: linked free widget allowance, 2: additional layouts unlocked by linking.
+#: includes/class-grwi-upgrade.php:91
+#, php-format
+msgid "Link a free GR Widget account to create up to %1$d widgets and unlock %2$d more layouts."
+msgstr ""
+
+#. translators: %d: linked free widget allowance.
+#: includes/class-grwi-upgrade.php:98
+#, php-format
+msgid "Link a free GR Widget account to create up to %d widgets."
+msgstr ""
+
+#: includes/class-grwi-upgrade.php:122
+msgid "Widget limit reached."
+msgstr ""
+
+#: includes/class-grwi-upgrade.php:132
+msgid "Link a free account"
+msgstr ""
+
+#: includes/class-grwi-upgrade.php:140
+#: includes/views/admin-page.php:1523
+msgid "View plans & start free trial"
+msgstr ""
+
+#: includes/class-grwi-upgrade.php:142
+msgid "Link account"
+msgstr ""
+
+#. translators: %s: GR Widget plan name (e.g. Pro).
+#: includes/class-grwi-upgrade.php:159
+#, php-format
+msgid "Requires %s plan or higher — start a 7-day free trial."
+msgstr ""
+
+#: includes/class-grwi-upgrade.php:162
+msgid "Requires a paid plan — start a 7-day free trial."
+msgstr ""
+
+#: includes/views/admin-page.php:8
+#: includes/views/admin-page.php:39
+#: includes/views/admin-page.php:1042
+msgid "Linked"
+msgstr ""
+
+#: includes/views/admin-page.php:53
+#: includes/views/admin-page.php:1504
+msgid "Unlimited"
+msgstr ""
+
+#. translators: %d: maximum reviews shown per widget on the current plan.
+#: includes/views/admin-page.php:56
+#, php-format
+msgid "Up to %d per widget"
+msgstr ""
+
+#: includes/views/admin-page.php:104
+msgid "View plans"
+msgstr ""
+
+#: includes/views/admin-page.php:110
+msgid "Site unlinked from your GR Widget account."
+msgstr ""
+
+#: includes/views/admin-page.php:112
+msgid "Site linked to your GR Widget account."
+msgstr ""
+
+#: includes/views/admin-page.php:118
+msgid "API token updated."
+msgstr ""
+
+#: includes/views/admin-page.php:120
+msgid "Plan limits refreshed."
+msgstr ""
+
+#: includes/views/admin-page.php:128
+#: includes/views/admin-page.php:129
+msgid "GR Widget — Google Reviews Widget"
+msgstr ""
+
+#: includes/views/admin-page.php:134
+msgid "Beautiful Google review widgets for WordPress — kept in sync and professionally rendered by GRWidget.com."
+msgstr ""
+
+#: includes/views/admin-page.php:155
+msgid "How's GR Widget working for you?"
+msgstr ""
+
+#: includes/views/admin-page.php:157
+msgid "If you have used GR Widget, we welcome your honest review on WordPress.org, whether positive or critical. Your experience helps other users and helps us improve."
+msgstr ""
+
+#: includes/views/admin-page.php:160
+msgid "Leave a review"
+msgstr ""
+
+#: includes/views/admin-page.php:161
+msgid "Maybe later"
+msgstr ""
+
+#: includes/views/admin-page.php:174
+msgid "Widgets"
+msgstr ""
+
+#: includes/views/admin-page.php:179
+msgid "Could not load widgets — reconnect required"
+msgstr ""
+
+#: includes/views/admin-page.php:180
+#: includes/views/admin-page.php:375
+msgid "Could not load widgets"
+msgstr ""
+
+#: includes/views/admin-page.php:202
+msgid "Create another widget"
+msgstr ""
+
+#: includes/views/admin-page.php:203
+msgid "Browse layouts"
+msgstr ""
+
+#: includes/views/admin-page.php:220
+msgid "current"
+msgstr ""
+
+#. translators: %s: number of Google reviews on the business.
+#: includes/views/admin-page.php:224
+#, php-format
+msgid "Your business has %s Google reviews!"
+msgstr ""
+
+#. translators: 1: current plan name, 2: reviews this plan includes, 3: reviews still not shown.
+#: includes/views/admin-page.php:231
+#, php-format
+msgid "Your %1$s plan includes up to %2$s reviews, but you've got another %3$s that could be helping build trust with your website visitors."
+msgstr ""
+
+#. translators: 1: Site plan review cap, 2: total Google reviews.
+#: includes/views/admin-page.php:252
+#, php-format
+msgid "Start a free trial of <strong>Site to display up to %1$s</strong> reviews, or <strong>Business to display all %2$s</strong>."
+msgstr ""
+
+#. translators: 1: Site plan review cap, 2: total Google reviews.
+#: includes/views/admin-page.php:258
+#, php-format
+msgid "Upgrade to <strong>Site to display up to %1$s</strong> reviews, or <strong>Business to display all %2$s</strong>."
+msgstr ""
+
+#. translators: %s: review count.
+#: includes/views/admin-page.php:266
+#, php-format
+msgid "Start a free trial of <strong>Site to display all %s</strong> reviews."
+msgstr ""
+
+#. translators: %s: review count.
+#: includes/views/admin-page.php:271
+#, php-format
+msgid "Upgrade to <strong>Site to display all %s</strong> reviews."
+msgstr ""
+
+#. translators: %s: review count.
+#: includes/views/admin-page.php:278
+#, php-format
+msgid "Start a free trial of <strong>Business to display all %s</strong>."
+msgstr ""
+
+#. translators: %s: review count.
+#: includes/views/admin-page.php:283
+#, php-format
+msgid "Upgrade to <strong>Business to display all %s</strong>."
+msgstr ""
+
+#: includes/views/admin-page.php:329
+#: includes/views/admin-page.php:1349
+msgid "Compare all plans"
+msgstr ""
+
+#: includes/views/admin-page.php:374
+#: includes/views/customize-error.php:12
+msgid "Reconnect your GR Widget account"
+msgstr ""
+
+#: includes/views/admin-page.php:381
+#: includes/views/customize-error.php:19
+msgid "Reconnect account"
+msgstr ""
+
+#: includes/views/admin-page.php:384
+#: includes/views/admin-page.php:660
+msgid "Try again"
+msgstr ""
+
+#: includes/views/admin-page.php:390
+msgid "Search widgets"
+msgstr ""
+
+#: includes/views/admin-page.php:398
+msgid "Search widgets…"
+msgstr ""
+
+#: includes/views/admin-page.php:415
+msgid "Live"
+msgstr ""
+
+#: includes/views/admin-page.php:415
+#: includes/views/customize-page.php:210
+msgid "Draft"
+msgstr ""
+
+#. translators: %s: widget name
+#: includes/views/admin-page.php:437
+#, php-format
+msgid "More actions for %s"
+msgstr ""
+
+#: includes/views/admin-page.php:481
+msgid "Check"
+msgstr ""
+
+#: includes/views/admin-page.php:506
+msgid "Edit widget"
+msgstr ""
+
+#: includes/views/admin-page.php:521
+msgid "Duplicate widget"
+msgstr ""
+
+#: includes/views/admin-page.php:534
+#: includes/views/admin-page.php:1469
+#: includes/views/admin-page.php:1476
+msgid "Delete widget"
+msgstr ""
+
+#: includes/views/admin-page.php:544
+msgid "No widgets match your search."
+msgstr ""
+
+#: includes/views/admin-page.php:550
+msgid "Add widgets with the GR Widget block or copy a shortcode from the widget menu."
+msgstr ""
+
+#: includes/views/admin-page.php:558
+msgid "Installation help"
+msgstr ""
+
+#: includes/views/admin-page.php:576
+msgid "Widget created"
+msgstr ""
+
+#: includes/views/admin-page.php:577
+msgid "Copy the shortcode below or customize colors and display options."
+msgstr ""
+
+#: includes/views/admin-page.php:585
+msgid "Shortcode"
+msgstr ""
+
+#: includes/views/admin-page.php:628
+msgid "Create your first Google reviews widget"
+msgstr ""
+
+#: includes/views/admin-page.php:630
+msgid "Find your business, choose a layout, and add your reviews to your website."
+msgstr ""
+
+#: includes/views/admin-page.php:631
+msgid "No Google sign-in or API key required."
+msgstr ""
+
+#: includes/views/admin-page.php:636
+msgid "Add widget"
+msgstr ""
+
+#: includes/views/admin-page.php:637
+msgid "Search for your business by name — no Google sign-in or API keys required."
+msgstr ""
+
+#: includes/views/admin-page.php:639
+msgid "Explore layouts"
+msgstr ""
+
+#: includes/views/admin-page.php:641
+msgid "Browse the layouts available for your next widget. Upgrade above when you’re ready to create it."
+msgstr ""
+
+#: includes/views/admin-page.php:642
+msgid "Browse the layouts available for your next widget. Link your free account above when you’re ready to create it."
+msgstr ""
+
+#: includes/views/admin-page.php:647
+msgid "Hide"
+msgstr ""
+
+#: includes/views/admin-page.php:662
+msgid "Dismiss notice"
+msgstr ""
+
+#. translators: %s: layout name
+#: includes/views/admin-page.php:693
+#, php-format
+msgid "Layout preview: %s"
+msgstr ""
+
+#: includes/views/admin-page.php:707
+msgid "View Business plan"
+msgstr ""
+
+#: includes/views/admin-page.php:742
+msgid "PREVIEWING · BUSINESS PLAN"
+msgstr ""
+
+#: includes/views/admin-page.php:811
+msgid "✓ SELECTED"
+msgstr ""
+
+#: includes/views/admin-page.php:879
+msgid "All layouts"
+msgstr ""
+
+#: includes/views/admin-page.php:887
+msgid "Filter layouts"
+msgstr ""
+
+#: includes/views/admin-page.php:920
+msgid "Find your business on Google"
+msgstr ""
+
+#: includes/views/admin-page.php:928
+msgid "Start typing your business name…"
+msgstr ""
+
+#: includes/views/admin-page.php:944
+msgid "Select your Google business first"
+msgstr ""
+
+#: includes/views/admin-page.php:945
+msgid "Search for and select your business above. You can then preview and customise any layout, including locked layouts, before you publish."
+msgstr ""
+
+#: includes/views/admin-page.php:952
+msgid "Your businesses"
+msgstr ""
+
+#: includes/views/admin-page.php:958
+msgid "Clear selected business"
+msgstr ""
+
+#: includes/views/admin-page.php:965
+msgid "Choose a layout"
+msgstr ""
+
+#: includes/views/admin-page.php:968
+msgid "Pick a design that fits your website. You can customise everything after adding your reviews."
+msgstr ""
+
+#: includes/views/admin-page.php:1006
+msgid "View Site plan to use this layout"
+msgstr ""
+
+#: includes/views/admin-page.php:1038
+msgid "Account"
+msgstr ""
+
+#: includes/views/admin-page.php:1045
+msgid "FREE UPGRADE"
+msgstr ""
+
+#: includes/views/admin-page.php:1053
+#: includes/views/admin-page.php:1274
+#: includes/views/admin-page.php:1293
+msgid "Unlimited widgets"
+msgstr ""
+
+#. translators: %d: max widgets on plan
+#: includes/views/admin-page.php:1056
+#, php-format
+msgid "%d widget"
+msgid_plural "%d widgets"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/views/admin-page.php:1060
+#: includes/views/admin-page.php:1294
+msgid "Unlimited reviews"
+msgstr ""
+
+#. translators: %d: max reviews per widget
+#: includes/views/admin-page.php:1063
+#, php-format
+msgid "%d review"
+msgid_plural "%d reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of layouts
+#: includes/views/admin-page.php:1071
+#, php-format
+msgid "%d layout"
+msgid_plural "%d layouts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/views/admin-page.php:1074
+msgid "Free"
+msgstr ""
+
+#: includes/views/admin-page.php:1076
+msgid "Connected to GR Widget"
+msgstr ""
+
+#. translators: %s: plan name
+#: includes/views/admin-page.php:1081
+#, php-format
+msgid "This site and its widgets are connected to your %s account."
+msgstr ""
+
+#: includes/views/admin-page.php:1089
+msgid "Plan"
+msgstr ""
+
+#: includes/views/admin-page.php:1098
+msgid "Google businesses"
+msgstr ""
+
+#: includes/views/admin-page.php:1103
+msgid "Included"
+msgstr ""
+
+#: includes/views/admin-page.php:1110
+msgid "Open web dashboard"
+msgstr ""
+
+#: includes/views/admin-page.php:1115
+msgid "Manage connection"
+msgstr ""
+
+#: includes/views/admin-page.php:1127
+msgid "Plan limits sync automatically"
+msgstr ""
+
+#: includes/views/admin-page.php:1152
+msgid "Get more from GR Widget."
+msgstr ""
+
+#: includes/views/admin-page.php:1153
+msgid "For free."
+msgstr ""
+
+#: includes/views/admin-page.php:1155
+msgid "Linking is free. Create a free GR Widget account to instantly upgrade this plugin. Your existing widgets and shortcodes stay in place."
+msgstr ""
+
+#: includes/views/admin-page.php:1159
+msgid "3 widgets"
+msgstr ""
+
+#: includes/views/admin-page.php:1160
+#: includes/views/admin-page.php:1165
+#: includes/views/admin-page.php:1170
+msgid "instead of"
+msgstr ""
+
+#: includes/views/admin-page.php:1164
+msgid "10 reviews"
+msgstr ""
+
+#: includes/views/admin-page.php:1169
+msgid "22 layouts"
+msgstr ""
+
+#: includes/views/admin-page.php:1173
+msgid "Cloud backup"
+msgstr ""
+
+#: includes/views/admin-page.php:1174
+msgid "Web dashboard"
+msgstr ""
+
+#: includes/views/admin-page.php:1180
+msgid "Unlock free features"
+msgstr ""
+
+#: includes/views/admin-page.php:1195
+msgid "Free forever"
+msgstr ""
+
+#: includes/views/admin-page.php:1197
+msgid "No card required."
+msgstr ""
+
+#: includes/views/admin-page.php:1205
+msgid "Takes ~20 seconds"
+msgstr ""
+
+#: includes/views/admin-page.php:1214
+msgid "Already have an account?"
+msgstr ""
+
+#: includes/views/admin-page.php:1214
+msgid "Link it here"
+msgstr ""
+
+#: includes/views/admin-page.php:1223
+msgid "Secure connection • Returns you to WordPress automatically"
+msgstr ""
+
+#: includes/views/admin-page.php:1265
+msgid "Try Site free for 7 days"
+msgstr ""
+
+#: includes/views/admin-page.php:1275
+msgid "Up to 30 reviews"
+msgstr ""
+
+#: includes/views/admin-page.php:1276
+#: includes/views/admin-page.php:1295
+msgid "Reviewer avatar photos"
+msgstr ""
+
+#: includes/views/admin-page.php:1277
+#: includes/views/admin-page.php:1296
+msgid "Every layout"
+msgstr ""
+
+#: includes/views/admin-page.php:1278
+#: includes/views/admin-page.php:1297
+msgid "Advanced customisation"
+msgstr ""
+
+#: includes/views/admin-page.php:1284
+msgid "Try Business free for 7 days"
+msgstr ""
+
+#: includes/views/admin-page.php:1298
+msgid "Daily sync"
+msgstr ""
+
+#: includes/views/admin-page.php:1299
+msgid "AI review summary"
+msgstr ""
+
+#: includes/views/admin-page.php:1300
+msgid "Stars in Google search"
+msgstr ""
+
+#: includes/views/admin-page.php:1301
+msgid "Photos uploaded with reviews"
+msgstr ""
+
+#: includes/views/admin-page.php:1315
+msgid "TRY PREMIUM"
+msgstr ""
+
+#: includes/views/admin-page.php:1317
+msgid "Unlock everything GR Widget can do"
+msgstr ""
+
+#: includes/views/admin-page.php:1319
+msgid "Try our premium features free for 7 days."
+msgstr ""
+
+#: includes/views/admin-page.php:1320
+msgid "Choose the plan that fits your website"
+msgstr ""
+
+#: includes/views/admin-page.php:1323
+msgid "Compare Site and Business"
+msgstr ""
+
+#: includes/views/admin-page.php:1360
+msgid "Share your GR Widget experience"
+msgstr ""
+
+#: includes/views/admin-page.php:1363
+msgid "Whether your experience has been positive or critical, your honest review helps other users and helps us improve GR Widget."
+msgstr ""
+
+#: includes/views/admin-page.php:1364
+msgid "Leave a WordPress review"
+msgstr ""
+
+#: includes/views/admin-page.php:1367
+msgid "Have a suggestion?"
+msgstr ""
+
+#: includes/views/admin-page.php:1368
+msgid "Send us feedback"
+msgstr ""
+
+#: includes/views/admin-page.php:1382
+msgid "Need help?"
+msgstr ""
+
+#: includes/views/admin-page.php:1384
+msgid "View our installation guide"
+msgstr ""
+
+#: includes/views/admin-page.php:1387
+msgid "Get step-by-step instructions to create your first widget."
+msgstr ""
+
+#: includes/views/admin-page.php:1443
+msgid "Close preview"
+msgstr ""
+
+#: includes/views/admin-page.php:1484
+msgid "Widgets are rendered by GRWidget.com. This plugin does not store reviews locally."
+msgstr ""
+
+#. translators: %s: plugin version number.
+#: includes/views/admin-page.php:1489
+#, php-format
+msgid "Plugin v%s"
+msgstr ""
+
+#. translators: %s: plan name (e.g. Free, Site, Business).
+#: includes/views/admin-page.php:1496
+#, php-format
+msgid "Plan: %s"
+msgstr ""
+
+#. translators: %s: maximum widget count for the current plan, or "Unlimited".
+#: includes/views/admin-page.php:1503
+#, php-format
+msgid "Max widgets: %s"
+msgstr ""
+
+#. translators: %s: Google businesses used and allowed, for example "1 / 1".
+#: includes/views/admin-page.php:1511
+#, php-format
+msgid "Google businesses: %s"
+msgstr ""
+
+#. translators: %s: review display limit for the current plan (e.g. "Up to 10 per widget" or "Unlimited").
+#: includes/views/admin-page.php:1519
+#, php-format
+msgid "Reviews shown: %s"
+msgstr ""
+
+#: includes/views/admin-page.php:1524
+msgid "WordPress help"
+msgstr ""
+
+#: includes/views/customize-error.php:13
+msgid "Could not open this widget"
+msgstr ""
+
+#: includes/views/customize-error.php:15
+msgid "Widget not found."
+msgstr ""
+
+#: includes/views/customize-error.php:22
+msgid "Back to widgets"
+msgstr ""
+
+#: includes/views/customize-page.php:40
+msgid "Editing"
+msgstr ""
+
+#: includes/views/customize-page.php:45
+msgid "Review Panel"
+msgstr ""
+
+#: includes/views/customize-page.php:48
+msgid "AI Features"
+msgstr ""
+
+#: includes/views/customize-page.php:111
+msgid "Widget editor sections"
+msgstr ""
+
+#: includes/views/customize-page.php:205
+msgid "Preview draft or live widget"
+msgstr ""
+
+#: includes/views/customize-page.php:222
+msgid "Switch to Draft to edit"
+msgstr ""
+
+#: includes/views/customize-page.php:228
+msgid "Start Site free trial"
+msgstr ""
+
+#: includes/views/customize-page.php:239
+msgid "Undo"
+msgstr ""
+
+#: includes/views/customize-page.php:264
+msgid "Paste the shortcode into a GR Widget block or any shortcode field. The plugin loads the embed script automatically."
+msgstr ""
+
+#: includes/views/customize-page.php:267
+#: includes/views/install-check.php:55
+msgid "WordPress shortcode"
+msgstr ""
+
+#: includes/views/customize-page.php:284
+msgid "HTML embed"
+msgstr ""
+
+#: includes/views/customize-page.php:292
+msgid "For Custom HTML blocks or templates, paste only this container markup. Do not add a script tag."
+msgstr ""
+
+#: includes/views/customize-page.php:296
+msgid "Done"
+msgstr ""
+
+#: includes/views/customize-page.php:337
+msgid "Steps to reproduce, what you expected, and what you saw instead…"
+msgstr ""
+
+#: includes/views/install-check.php:29
+msgid "Check if a widget is live"
+msgstr ""
+
+#: includes/views/install-check.php:30
+msgid "Enter a public page on this site. We look for that widget’s block, shortcode, embed, or rendered markup."
+msgstr ""
+
+#: includes/views/install-check.php:40
+msgid "Page address"
+msgstr ""
+
+#: includes/views/install-check.php:52
+msgid "Where you added it"
+msgstr ""
+
+#: includes/views/install-check.php:54
+msgid "WordPress block"
+msgstr ""
+
+#: includes/views/install-check.php:56
+msgid "Elementor"
+msgstr ""
+
+#: includes/views/install-check.php:57
+msgid "Divi"
+msgstr ""
+
+#: includes/views/install-check.php:58
+msgid "Bricks"
+msgstr ""
+
+#: includes/views/install-check.php:61
+msgid "Check this page"
+msgstr ""
+
+#: assets/block.js:19
+msgid "Select a widget…"
+msgstr ""
+
+#: assets/block.js:33
+msgid "Current key (not in list)"
+msgstr ""
+
+#: assets/block.js:55
+msgid "Choose a widget from the GR Widget admin menu, or paste an embed key below."
+msgstr ""
+
+#: assets/block.js:63
+msgid "Embed key (if not in the list)"
+msgstr ""
+
+#: assets/block.js:64
+msgid "Embed key"
+msgstr ""
+
+#: assets/block.js:70
+msgid "Paste a key that is not in the dropdown. Open GR Widget in the WordPress admin menu to manage widgets."
+msgstr ""
+
+#: assets/block.js:71
+msgid "Paste the embed key from GR Widget in the WordPress admin menu."
+msgstr ""

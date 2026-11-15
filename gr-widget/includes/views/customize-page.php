@@ -252,7 +252,7 @@ $grwi_section_display_title = static function ($section_id, $title) {
     </div>
 
 
-    <script type="application/json" id="grwi-customize-editor"><?php echo wp_json_encode($editor); ?></script>
+    <script type="application/json" id="grwi-customize-editor"><?php echo wp_json_encode($editor, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
 
     <div id="grwi-install-modal" class="grw-bug-modal grw-install-modal" hidden role="dialog" aria-modal="true" aria-labelledby="grwi-install-modal-title">
         <div class="grw-bug-modal__backdrop" data-grwi-install-close tabindex="-1" aria-hidden="true"></div>

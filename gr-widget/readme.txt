@@ -4,7 +4,7 @@ Tags: google reviews, google reviews widget, google reviews embed, business revi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,19 +66,19 @@ When you need more than the linked free allowance, paid plans are domain-based (
 * 🧠 **AI review summary** (Business+)
 * 🔍 **JSON-LD / review structured data** for search engines on Business & Agency (eligibility for rich results is never guaranteed)
 * 🏷️ Agency adds **white-label**, multi-client management, and **10 combined invited seats**
-* 🎛️ **Full design customisation (Site+)** — make every widget match your brand with colours, typography, spacing, borders, labels, element controls, and custom CSS (Free keeps light/dark theme + font family)
+* 🎛️ **Full design customisation (Site+)** — make every widget match your brand with colours, typography, spacing, borders, labels, and element controls (Free keeps light/dark theme + font family)
 
 [Compare plans at GRWidget.com](https://grwidget.com/pricing).
 
 = How it works =
 
 1. Install and activate GR Widget
-2. Open **GR Widget** in wp-admin and search for your business
+2. Open **GR Widget** in wp-admin and choose **Connect this website to GRWidget.com** after reading the service/data disclosure; no account is required
 3. Pick a layout and create your Google review widget
 4. Paste the shortcode or insert the **GR Widget** block — done
 5. (Optional) Link a free GRWidget.com account from **GR Widget → Account** to unlock 3 widgets, 22 layouts, 10 reviews, and the hosted builder
 
-Widget HTML/CSS/JS is served by the hosted `grwidget.js` embed and the GRWidget.com API. This plugin is a thin, Plugin Check–friendly client.
+Widget HTML/CSS/JS is served by the hosted `grwidget.js` embed and the GRWidget.com API. This plugin connects WordPress to that hosted service.
 
 You can see live examples of all the Google Reviews Widget layouts and styles available on our [examples page](https://grwidget.com/examples).
 
@@ -87,13 +87,15 @@ You can see live examples of all the Google Reviews Widget layouts and styles av
 For a full walkthrough, follow our guide to [embed Google reviews in WordPress](https://grwidget.com/blog/embed-google-reviews-wordpress).
 
 1. Install **GR Widget** from Plugins → Add New (search “GR Widget” or “Google reviews”), or upload the ZIP.
-2. Activate the plugin — it registers your site with GRWidget.com automatically.
-3. Go to **GR Widget** in the WordPress admin menu.
+2. Activate the plugin (activation does not contact or register with an external service).
+3. Go to **GR Widget** in the WordPress admin menu, read the disclosure, and click **Connect this website to GRWidget.com** to authorise registration.
 4. Search for your business, choose a layout, and click **Create widget**.
 5. Copy `[grwi_widget id="your-embed-key"]` into a page or post, or insert the **GR Widget** block.
 6. Optional: open **GR Widget → Account** and link a free GRWidget.com account (one click — no API token paste). That unlocks 3 widgets, 22 layouts, 10 reviews available, and the hosted builder.
 
 The plugin loads the embed script automatically on pages that contain a widget — no manual `<script>` tag needed.
+
+Service requests and plugin-generated embeds require the explicit connection consent above. After upgrading from a version that did not record consent, an administrator must confirm the connection in GR Widget; saved widget and account details are retained. Inactive or unrendered sidebar widgets do not trigger embed loading.
 
 == Support ==
 
@@ -105,6 +107,11 @@ The plugin loads the embed script automatically on pages that contain a widget �
 * 💡 **Feature requests** — post ideas on the [WordPress.org support forum for GR Widget](https://wordpress.org/support/plugin/gr-widget/). We continually explore improvements and consider all feature requests.
 
 == Frequently Asked Questions ==
+
+= Where should I add custom CSS? =
+
+Use WordPress’s native Additional CSS tools for site-level CSS. The plugin provides structured colour, font, spacing, border and display controls and does not accept arbitrary CSS, JavaScript or PHP. Saving a widget through the plugin clears any custom CSS stored for that widget by older releases. If you used that feature, move your styling to WordPress before saving the widget again.
+
 
 = Do I need a GR Widget account? =
 
@@ -173,7 +180,7 @@ In Elementor, the Shortcode or HTML widget may show `[grwi_widget …]` as plain
 
 == External services ==
 
-This plugin relies on external services to work. By installing and activating it, you authorize the connections below (similar to Akismet or other SaaS-connected plugins — no separate opt-in checkbox is required because the plugin cannot function without GRWidget.com).
+This plugin uses GRWidget.com as an external SaaS service. Installing or activating the plugin alone does **not** register your site or contact GRWidget.com. When you explicitly choose **Connect this website to GRWidget.com** on the plugin setup screen, you authorise site registration (including the site URL and plugin version) and the service interactions described below. A hosted account is not required for the initial free tier, but connecting the site to the hosted service is required to search businesses and create widgets.
 
 = GRWidget.com =
 
@@ -183,10 +190,11 @@ This plugin relies on external services to work. By installing and activating it
 
 **When it is contacted:**
 
-* **Plugin activation** — registers your WordPress site and retrieves plan limits
+* **Plugin activation** — does not make external requests or register your site
+* **User-initiated setup** — on selecting **Connect this website to GRWidget.com**, transmits the site URL and plugin version to register the site and retrieves applicable plan limits
 * **wp-admin (GR Widget)** — business search, widget create/delete, account linking, plan refresh; layout cards use local miniature previews (no iframes); live preview loads `grw-preview.js`; widget style editor runs entirely in wp-admin
 * **Widget customisation** — colours, fonts, and display options are edited on the native **Customise** screen in wp-admin (API-backed; no external tabs or iframes). After linking an account, you can also customise the same widgets in the full-featured web builder
-* **Public site** — loads `grwidget.com/v1/grwidget.js` only on pages that contain a GR Widget shortcode or block (not site-wide); the script fetches widget JSON to render review embeds
+* **Public site** — loads `grwidget.com/v1/grwidget.js` only after service consent on pages that actually render a GR Widget shortcode, block or embed container (not site-wide); the script fetches widget JSON to render review embeds
 * **Background** — plan limits may refresh twice daily via WordPress cron
 
 **Data sent to GRWidget.com:**
@@ -220,27 +228,27 @@ This plugin relies on external services to work. By installing and activating it
 **When it is involved:**
 
 * **wp-admin** — when you search for a business or trigger review sync, your search terms and selected place ID are sent to GRWidget.com, which queries Google server-side (your WordPress site never stores or sends Google API keys)
-* **Public site** — review text, ratings, and business details are served from GRWidget.com (originally sourced from Google). Optional Google links appear in the widget UI; data is sent to Google only if a visitor clicks those links and leaves your site
+* **Public site** — review text, ratings, and business details are served from GRWidget.com (originally sourced from Google). Optional Google links appear in the widget UI. When reviewer avatars or customer photos are enabled, previews and embeds can also request images from the image URLs supplied with those reviews (including Google image hosts such as googleusercontent.com)
 
 **Data sent:**
 
 * To GRWidget.com (then to Google server-side): business search queries, Google place IDs, and business metadata needed to sync reviews
-* To Google directly from the visitor’s browser: only when a visitor clicks a Google link in a widget (standard browser navigation; may include referrer URL per the browser’s normal behaviour). The plugin does not call Google APIs from WordPress.
+* To Google directly from the visitor’s browser: when a visitor clicks a Google link (standard browser navigation), or when the browser loads enabled reviewer avatars/customer photos. Image requests disclose the browser IP address and user-agent to the image host. The plugin does not call Google APIs from WordPress.
 
 **Terms and privacy:**
 
 * Google Terms of Service: https://policies.google.com/terms
 * Google Privacy Policy: https://policies.google.com/privacy
 
-= Google Fonts (optional, visitor browsers) =
+= Google Fonts (optional, previews and visitor browsers) =
 
-**What it is:** Google’s hosted web font service (`fonts.googleapis.com`), used only when a widget is configured to use a Google Font rather than the site’s inherited/system font.
+**What it is:** Google’s hosted web font service (`fonts.googleapis.com`), used when a widget is configured to use a Google Font rather than the site’s inherited/system font.
 
-**Used for:** Loading the font files that style widget text on the public site.
+**Used for:** Loading fonts that style widget text in the wp-admin preview and on the public site, after service consent.
 
-**When it is contacted:** When a visitor views a page containing a widget whose style uses a Google Font preset — the hosted `grwidget.js` embed script injects a stylesheet request to Google Fonts.
+**When it is contacted:** After service consent, when an administrator previews or a visitor views a widget that uses a Google Font preset, the hosted preview/embed script requests font CSS from fonts.googleapis.com and font files from fonts.gstatic.com. Choose the inherited font to avoid these optional requests.
 
-**Data sent:** The visitor’s browser requests font CSS from Google; Google may log the request per its own policies (typically IP address and user-agent). No WordPress user or site-admin data is sent by the plugin for this purpose.
+**Data sent:** The administrator’s or visitor’s browser sends its IP address and user-agent when requesting font CSS/files. WordPress usernames, email addresses and passwords are not included in these font requests.
 
 **Terms and privacy:**
 
@@ -252,6 +260,25 @@ This plugin relies on external services to work. By installing and activating it
 This plugin does not load third-party advertising or analytics trackers on your public site. Scripts and styles for wp-admin UI (except the GRWidget.com connections above) are bundled in the plugin. Upgrade and account links open GRWidget.com in your browser only when you click them.
 
 == Changelog ==
+
+= 1.2.5 =
+* Require explicit service consent for all service requests and embeds, including upgraded installations.
+* Detect embeds only in rendered content; inactive widget areas do not trigger remote scripts.
+* Remove custom CSS controls and reject arbitrary code at the WordPress configuration save boundary.
+* Validate and sanitize supported configuration fields before forwarding them to the hosted service.
+
+
+= 1.2.4 =
+**Compliance and privacy**
+* New installations require an explicit administrator action before site registration with GRWidget.com. Plugin activation does not transmit site data.
+* Added a local setup disclosure describing the hosted service and transmitted data.
+* Prevented unauthorised background requests and initial widget API calls before setup.
+* Kept previously linked or registered sites connected and retained existing shortcodes.
+* Stopped suppressing other plugins' WordPress admin notices and changed in-plugin review prompts to welcome positive or critical reviews without star graphics.
+* Preserved credential recovery for existing registered sites without enabling service requests on new installations before consent.
+* Open the account-link popup directly from the user's click before requesting the connection URL, reducing browser popup blocking.
+* Corrected translation context, input sanitisation, and template issues reported by Plugin Check.
+* Restricted API calls to HTTPS.
 
 = 1.2.3 =
 **Added**
@@ -343,11 +370,14 @@ This plugin does not load third-party advertising or analytics trackers on your 
 * Reviews sync on GRWidget.com — your WordPress database does not store review content.
 * Optional GRWidget.com account linking for paid plans, more widgets, and daily sync.
 * Embed script loads only on pages that contain a widget (not site-wide).
-* Plugin Check compliant: escaped output, nonces, uninstall cleanup, and contextual upgrade notices in wp-admin only.
+* WordPress.org compliance improvements: explicit site-registration consent on new installations, escaped output, nonces, uninstall cleanup, and contextual upgrade notices in wp-admin only.
 * Prefix compliance — options, cron hooks, AJAX actions, script/style handles, and localized JS objects use `grwi_` / `GRWI_`; legacy `grw_*` options migrate automatically on upgrade.
 * Tested up to WordPress 7.0; view-template and uninstall loop variables prefixed for Plugin Check; mock CSS enqueue versioned; core `sidebars_widgets` filter usage documented.
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+Privacy and WordPress.org compliance update. New installations explicitly authorise GRWidget.com site registration from the setup screen. Existing registered sites and published widgets are preserved.
 
 = 1.2.3 =
 Check whether a widget is already on a page, from the Widgets screen. If a page check does not find the widget, Get help emails support with the details. Existing widgets and shortcodes are unchanged. Safe update.

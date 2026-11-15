@@ -93,9 +93,11 @@ class GRWI_Customize
         $customize_css_ver = self::asset_version('assets/admin-customize.css');
         wp_enqueue_style('grwi-customize', GRWI_PLUGIN_URL . 'assets/admin-customize.css', ['grwi-admin'], $customize_css_ver);
 
-        add_filter('wp_resource_hints', [GRWI_Admin::class, 'resource_hints'], 10, 2);
-
         $client = new GRWI_API_Client();
+        if (! $client->is_registered() && ! $client->is_linked()) {
+            return;
+        }
+        add_filter('wp_resource_hints', [GRWI_Admin::class, 'resource_hints'], 10, 2);
         $caps = $client->capabilities();
         $preview_script = esc_url((string) ($caps['preview_script_url'] ?? 'https://grwidget.com/js/grw-preview.js'));
         wp_enqueue_script('grwi-preview', $preview_script, [], GRWI_VERSION, true);
@@ -220,45 +222,59 @@ class GRWI_Customize
                 'businessPlan' => __('BUSINESS PLAN', 'gr-widget'),
                 'sitePlanPlus' => __('SITE PLAN', 'gr-widget'),
                 'businessPlanPlus' => __('BUSINESS PLAN', 'gr-widget'),
+                /* translators: %s: layout name. */
                 'linkLayoutTitle' => __('Unlock %s with a free account', 'gr-widget'),
                 'linkLayoutBody' => __('Link a free account to unlock this layout. Free includes 22 layouts; Site unlocks 31 with up to 30 reviews, reviewer photos, filters and bi-weekly syncing.', 'gr-widget'),
                 'linkLayoutCta' => __('Link free account', 'gr-widget'),
                 'linkLayoutSecondary' => __('Continue with current layout', 'gr-widget'),
                 'linkLayoutFooter' => __('No payment required', 'gr-widget'),
+                /* translators: %s: layout name. */
                 'siteLayoutTitle' => __('Unlock %s with Site', 'gr-widget'),
+                /* translators: %s: layout name. */
                 'siteLayoutBody' => __('Display your reviews using the %s. Site also includes 31 layouts, up to 30 reviews, reviewer photos, filters, bi-weekly syncing and full design control.', 'gr-widget'),
                 'siteLayoutSupporting' => __('$0 today. Your first payment of $5.99 is after 7 days unless you cancel.', 'gr-widget'),
                 'siteLayoutCta' => __('Start 7-day Site trial', 'gr-widget'),
                 'siteLayoutSecondary' => __('Continue with current layout', 'gr-widget'),
                 'siteLayoutFooter' => __('Cancel anytime during the trial', 'gr-widget'),
+                /* translators: %s: widget name. */
                 'editingSubtitle' => __('%s · Editing', 'gr-widget'),
                 'sitePlanName' => __('Site', 'gr-widget'),
                 'businessPlanName' => __('Business', 'gr-widget'),
                 'featureTrialSecondary' => __('Not now', 'gr-widget'),
+                /* translators: %s: feature name. */
                 'linkFeatureTitle' => __('Unlock %s with a free account', 'gr-widget'),
                 'linkFeatureBody' => __('Link a free GR Widget account to start a trial and unlock premium features.', 'gr-widget'),
+                /* translators: %s: plan name. */
                 'featureTrialBody' => __('Start a 7-day free trial of %s to unlock this feature and premium tools.', 'gr-widget'),
+                /* translators: %s: plan name. */
                 'featureUpgradeBody' => __('Upgrade to %s to unlock this feature.', 'gr-widget'),
                 'businessTrialSupporting' => __('$0 today. Your first payment of $14.99 is after 7 days unless you cancel.', 'gr-widget'),
                 'trialUnknownSupporting' => __('Trial eligibility will be confirmed before payment.', 'gr-widget'),
                 'trialIneligibleSupporting' => __('Charged at checkout. Cancel anytime.', 'gr-widget'),
                 'businessTrialIneligibleSupporting' => __('Charged at checkout. Cancel anytime.', 'gr-widget'),
+                /* translators: %s: required plan name. */
                 'premiumPreviewLock' => __('Preview freely — %s is required to publish', 'gr-widget'),
                 'agencyPlanName' => __('Agency', 'gr-widget'),
                 'agencyPlanCompact' => __('AGENCY', 'gr-widget'),
                 'previewFirstContinueEditing' => __('Continue editing', 'gr-widget'),
                 'previewFirstStartTrial' => __('Start my free trial', 'gr-widget'),
                 'previewFirstDraftSaved' => __('Draft saved. Your current live widget is unchanged.', 'gr-widget'),
+                /* translators: %s: required plan name. */
                 'previewFirstBannerTitle' => __('Your design uses %s features', 'gr-widget'),
                 'previewFirstBannerTitleBusiness' => __('Your design requires Business', 'gr-widget'),
+                /* translators: 1: list of premium features, 2: required plan name. */
                 'previewFirstBannerBody' => __('%1$s require %2$s to publish. Keep designing for free—your current live widget won’t change.', 'gr-widget'),
+                /* translators: 1: premium feature name, 2: required plan name. */
                 'previewFirstBannerBodySingular' => __('%1$s requires %2$s to publish. Keep designing for free—your current live widget won’t change.', 'gr-widget'),
+                /* translators: %s: plan name. */
                 'previewFirstUpgradePublish' => __('Upgrade to %s & publish', 'gr-widget'),
                 'previewFirstPublish' => __('Publish changes', 'gr-widget'),
                 'previewFirstLinkPublish' => __('Link free account & publish', 'gr-widget'),
                 'previewFirstLinkTitle' => __('Link a free account to publish this layout', 'gr-widget'),
                 'previewFirstLinkTitleGeneric' => __('Link a free account to publish', 'gr-widget'),
+                /* translators: %s: layout name. */
                 'previewFirstLinkBody' => __('%s is included free when you link a GR Widget account. Keep designing—your current live widget won’t change.', 'gr-widget'),
+                /* translators: %d: maximum number of reviews. */
                 'previewFirstLinkBodyReviews' => __('Link a free account to show up to %d reviews. Keep designing—your current live widget won’t change.', 'gr-widget'),
                 'previewFirstLinkReassurance' => __('Free to link · No card required · Returns you to WordPress', 'gr-widget'),
                 'previewFirstLinkCta' => __('Link free account', 'gr-widget'),
@@ -270,13 +286,14 @@ class GRWI_Customize
                 'previewFirstViewFeatures' => __('View included features', 'gr-widget'),
                 'saveDraft' => __('Save draft', 'gr-widget'),
                 'publishChanges' => __('Publish changes', 'gr-widget'),
+                /* translators: %s: plan name. */
                 'upgradeAndPublish' => __('Upgrade to %s & publish', 'gr-widget'),
                 'customizeTrialHeadline' => __('Make every widget match your brand', 'gr-widget'),
-                'customizeTrialBody' => __('Try custom colours, typography, spacing, borders, labels, and custom CSS free for 7 days on Site.', 'gr-widget'),
+                'customizeTrialBody' => __('Try custom colours, typography, spacing, borders, and labels free for 7 days on Site.', 'gr-widget'),
                 'customizeTrialCta' => __('Start 7-day Site trial', 'gr-widget'),
                 'customizeTrialFoot' => __('Then $5.99/month · Cancel anytime', 'gr-widget'),
                 'customizeUpgradeHeadline' => __('Make every widget match your brand', 'gr-widget'),
-                'customizeUpgradeBody' => __('Unlock custom colours, typography, spacing, borders, labels, and custom CSS with Site.', 'gr-widget'),
+                'customizeUpgradeBody' => __('Unlock custom colours, typography, spacing, borders, and labels with Site.', 'gr-widget'),
                 'customizeUpgradeCta' => __('Upgrade to Site', 'gr-widget'),
                 'customizeUpgradeFoot' => __('From $5.99/month · Cancel anytime', 'gr-widget'),
                 'sitePlanPill' => __('SITE PLAN', 'gr-widget'),
@@ -476,7 +493,7 @@ class GRWI_Customize
             $error_message = $client->is_reconnect_error($editor)
                 ? $client->reconnect_message()
                 : $client->user_facing_message($editor->get_error_message());
-            $error_reconnect = $client->is_reconnect_error($editor);
+            $grwi_error_reconnect = $client->is_reconnect_error($editor);
             include GRWI_PLUGIN_DIR . 'includes/views/customize-error.php';
 
             return;
@@ -651,16 +668,11 @@ class GRWI_Customize
             wp_send_json_error(['message' => __('Missing widget key.', 'gr-widget')], 422);
         }
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $config_raw = wp_unslash($_POST['config'] ?? '');
-        $config = [];
-        if (is_string($config_raw) && $config_raw !== '') {
-            $decoded = json_decode($config_raw, true);
-            if (is_array($decoded)) {
-                $config = $decoded;
-            }
-        } elseif (is_array($config_raw)) {
-            $config = $config_raw;
+        // The local closed schema validates scalar types, enums, bounds and lists.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- GRWI_Config::sanitize validates all decoded fields before forwarding.
+        $config = GRWI_Config::sanitize(wp_unslash($_POST['config'] ?? ''));
+        if (is_wp_error($config)) {
+            wp_send_json_error(['message' => $config->get_error_message()], 422);
         }
 
         $payload = ['config' => $config];
@@ -669,11 +681,18 @@ class GRWI_Customize
             $payload['layout'] = $layout;
         }
         $save_mode = sanitize_key(wp_unslash($_POST['save_mode'] ?? ''));
-        if (in_array($save_mode, ['auto', 'draft', 'publish'], true)) {
+        if ($save_mode !== '' && ! in_array($save_mode, ['auto', 'draft', 'publish'], true)) {
+            wp_send_json_error(['message' => __('Invalid save mode.', 'gr-widget')], 422);
+        }
+        if ($save_mode !== '') {
             $payload['save_mode'] = $save_mode;
         }
-        if (! empty($_POST['publish_plan_safe'])) {
-            $payload['publish_plan_safe'] = true;
+        if (isset($_POST['publish_plan_safe'])) {
+            $plan_safe = filter_var(wp_unslash($_POST['publish_plan_safe']), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($plan_safe === null) {
+                wp_send_json_error(['message' => __('Invalid publish option.', 'gr-widget')], 422);
+            }
+            $payload['publish_plan_safe'] = $plan_safe;
         }
 
         $client = new GRWI_API_Client();
