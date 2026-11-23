@@ -113,6 +113,7 @@
 
     // Older service responses may still group schema in Settings or omit Language.
     function ensureLanguageSeoTabs(editor) {
+        var cfg = window.grwiCustomize || {};
         editor = editor || {};
         var builder = editor.builder = editor.builder || {};
         var fields = builder.fields = Array.isArray(builder.fields) ? builder.fields : [];
@@ -125,7 +126,18 @@
         var seoField = fields.find(function (field) { return field.key === 'enable_json_ld'; });
         if (seoField) seoField.section = 'seo';
         else { seoField = {key:'enable_json_ld',type:'checkbox',section:'seo',group:'json_ld',label:'Enable review & rating schema',locked:true,upgrade_feature:'json_ld'}; fields.push(seoField); }
-        if (!fields.some(function (field) { return field.key === 'language'; })) fields.push({key:'language',type:'select',section:'language',label:'Widget language',options:[{"value":"auto","label":"Automatic — Website language"},{"value":"en","label":"English"},{"value":"nl","label":"Nederlands"},{"value":"fr","label":"Français"},{"value":"de","label":"Deutsch"},{"value":"es","label":"Español"},{"value":"it","label":"Italiano"},{"value":"pt","label":"Português"},{"value":"pl","label":"Polski"},{"value":"uk","label":"Українська"},{"value":"ar","label":"العربية"},{"value":"zh","label":"中文（简体）"},{"value":"ja","label":"日本語"},{"value":"tr","label":"Türkçe"},{"value":"sv","label":"Svenska"},{"value":"da","label":"Dansk"},{"value":"nb","label":"Norsk (bokmål)"},{"value":"fi","label":"Suomi"},{"value":"cs","label":"Čeština"},{"value":"ro","label":"Română"},{"value":"hu","label":"Magyar"},{"value":"el","label":"Ελληνικά"}]});
+        if (!fields.some(function (field) { return field.key === 'language'; })) fields.push({key:'language',type:'select',section:'language',label:'Widget language',options:cfg.languageOptions || []});
+        // Display old saved Dutch values canonically without persisting or resetting config.
+        ['config','draft_config'].forEach(function(key){
+            if (!editor[key]) return;
+            ['language','ai_summary_language_override'].forEach(function(field){if(editor[key][field]==='nl')editor[key][field]='nl-NL';});
+        });
+        if (Array.isArray(cfg.languageOptions) && cfg.languageOptions.length) {
+            fields.forEach(function(field){
+                if (field.key==='language') field.options=cfg.languageOptions;
+                if (field.key==='ai_summary_language_override') field.options=[{value:'follow',label:'Follow widget language'}].concat(cfg.languageOptions.filter(function(option){return option.value!=='auto';}));
+            });
+        }
         var sections = (builder.sections || []).filter(function (section) { return ['language','seo','settings','options'].indexOf(section.id)<0; });
         var install = sections.findIndex(function (section) { return section.id === 'install'; });
         sections.splice(install < 0 ? sections.length : install,0,

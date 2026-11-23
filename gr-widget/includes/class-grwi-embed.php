@@ -20,13 +20,21 @@ final class GRWI_Embed
     public static function frontend_locale(): string
     {
         $locale = function_exists('get_locale') ? (string) get_locale() : 'en_US';
-        if (function_exists('is_admin') && is_admin() && function_exists('get_option')) {
+        $admin = function_exists('is_admin') && is_admin();
+        if ($admin && function_exists('get_option')) {
             $locale = (string) get_option('WPLANG', 'en_US') ?: 'en_US';
         }
-        if (function_exists('pll_current_language')) {
+        if (! $admin && function_exists('pll_current_language')) {
             $locale = (string) pll_current_language('locale') ?: $locale;
-        } elseif (function_exists('apply_filters')) {
-            $locale = (string) apply_filters('wpml_current_language', null) ?: $locale;
+        } elseif (! $admin && function_exists('apply_filters')) {
+            $current = (string) apply_filters('wpml_current_language', null);
+            // get_locale() is already filtered by WPML. Its full locale is more precise
+            // than a matching two-letter language slug (nl must not erase nl_BE).
+            $base = strtolower((string) preg_split('/[_-]/', $locale)[0]);
+            if ($current !== '' && $current !== 'all'
+                && (strpbrk($current, '_-') !== false || strtolower($current) !== $base)) {
+                $locale = $current;
+            }
         }
         if (function_exists('apply_filters')) {
             $locale = (string) apply_filters('grwi_widget_frontend_locale', $locale);

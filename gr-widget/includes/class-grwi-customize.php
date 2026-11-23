@@ -110,7 +110,7 @@ class GRWI_Customize
         }
         add_filter('wp_resource_hints', [GRWI_Admin::class, 'resource_hints'], 10, 2);
         // Fetch once per request; the same fresh editor payload renders the page below.
-        // Asset URLs change with web releases, even when the plugin remains on 1.2.7.
+        // Asset URLs change with web releases, independently of the installed plugin version.
         $requested_key = sanitize_text_field(wp_unslash($_GET['widget'] ?? ''));
         $fresh_editor = [];
         if ($requested_key !== '') {
@@ -178,6 +178,7 @@ class GRWI_Customize
             'previewScriptUrl' => $fresh_editor['preview_script_url'] ?? $caps['preview_script_url'] ?? '',
             'pluginUrl' => GRWI_PLUGIN_URL,
             'pluginVersion' => GRWI_VERSION,
+            'languageOptions' => json_decode((string) file_get_contents(__DIR__ . '/builder-language-options.json'), true),
             'pluginAssetVersion' => self::asset_version('assets/google-search-stars-rich-result.svg'),
             'upgradeUrl' => $caps['upgrade_url'] ?? '',
             'trialUrl' => $trial_url,

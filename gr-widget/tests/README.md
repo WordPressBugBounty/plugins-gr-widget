@@ -33,3 +33,7 @@ Additional release QA was run on the controlled WordPress demo with WP_DEBUG ena
 real MySQL temporary fixture tables, actual hosted reviews and read-only server activity
 verification. Anonymous and linked upgrade paths from both specified versions passed.
 See docs/legacy-authorization.md for results; these are separate from this standalone harness.
+
+## Regional Dutch (1.2.8 testing release)
+The widget language selector distinguishes Nederlands (Nederland), nl-NL, and Nederlands (België), nl-BE. Legacy nl means Netherlands Dutch. Page locales nl_BE/nl_NL retain their region; WPML base slugs preserve the matching full frontend locale and Polylang uses its page locale. Explicit widget selection overrides detection. No widget reset, reconnection or renewed consent is required.
+Run localization-regression.php for site, wpml, wpml_other, wpml_full, wpml_all, polylang, admin, invalid, ar, zh, ja and nb. The shared application audit documents wording changes and native-review limitations.

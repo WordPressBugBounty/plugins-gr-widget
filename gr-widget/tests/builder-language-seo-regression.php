@@ -1,7 +1,7 @@
 <?php
 /** Offline native-tab and save-boundary regression test. */
 define('ABSPATH', __DIR__.'/');
-define('GRWI_VERSION', '1.2.7');
+define('GRWI_VERSION', '1.2.8');
 define('GRWI_PLUGIN_URL', 'https://native.test/wp-content/plugins/gr-widget/');
 function esc_url($url) { return htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); }
 function __($text, $domain = '') { return $text; }
@@ -21,12 +21,12 @@ foreach ([true, false] as $locked) {
  check($result['fields'][0]['section']==='seo','No Structured Data field left in Settings');
  check($result['sections'][2]['locked']===$locked,'Business entitlement preserved');
  $language=array_values(array_filter($result['fields'],static function($f){return $f['key']==='language';}))[0];
- check(count($language['options'])===22,'Automatic plus 21 languages');
+ check(count($language['options'])===23,'Automatic plus 22 regional language choices');
  check(GRWI_Customize::language_seo_tabs($result)===$result,'Repeated refresh is idempotent');
 }
 $missing=GRWI_Customize::language_seo_tabs([]);
 check($missing['sections'][1]['locked']===true,'Missing entitlement never grants SEO');
-foreach (['en','nl','ar','zh','ja','nb','el'] as $code) {
+foreach (['en','nl','nl-NL','nl-BE','ar','zh','ja','nb','el'] as $code) {
  $clean=GRWI_Config::sanitize(['language'=>$code,'language_mode'=>'fixed','ai_summary_language_override'=>$code,'enable_json_ld'=>false]);
  check(!is_wp_error($clean) && $clean['language']===$code && $clean['language_mode']==='fixed' && $clean['ai_summary_language_override']===$code,'Language and AI override survive the save boundary');
 }

@@ -4,7 +4,7 @@ Tags: google reviews, google reviews widget, google reviews embed, business revi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.7
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ No account is required to get started. Link a free [GRWidget.com](https://grwidg
 
 = Why site owners choose this Google reviews widget =
 
-* 🌐 **Multilingual widgets on every plan** — English, Dutch, French, German, Spanish, Italian, Portuguese, Polish, Ukrainian, Arabic, Chinese (Simplified), Japanese, Turkish, Swedish, Danish, Norwegian (Bokmål), Finnish, Czech, Romanian, Hungarian and Greek. Detect your page language automatically or choose a language in the builder. More languages will be added soon. Original reviews and reviewer names stay unchanged.
+* 🌐 **Multilingual widgets on every plan** — English, Dutch (Netherlands and Belgium), French, German, Spanish, Italian, Portuguese, Polish, Ukrainian, Arabic, Chinese (Simplified), Japanese, Turkish, Swedish, Danish, Norwegian (Bokmål), Finnish, Czech, Romanian, Hungarian and Greek. Detect your page language automatically or choose a language in the builder. More languages will be added soon. Original reviews and reviewer names stay unchanged.
 
 * 🔑 **No Google API keys** — search by business name; we handle Google data on our servers
 * 🧩 **Shortcode + Gutenberg block** — `[grwi_widget id="your-key"]` or the **GR Widget** block to embed Google reviews
@@ -263,6 +263,11 @@ This plugin does not load third-party advertising or analytics trackers on your 
 
 == Changelog ==
 
+= 1.2.8 =
+* Added dedicated Dutch (Belgium) and Dutch (Netherlands) language choices.
+* Improved widget translations, review counts and regional language detection.
+* Keep your existing widgets and connection when updating.
+
 = 1.2.7 =
 * Display your widget in 21 languages on every plan: English, Dutch, French, German, Spanish, Italian, Portuguese, Polish, Ukrainian, Arabic, Chinese (Simplified), Japanese, Turkish, Swedish, Danish, Norwegian (Bokmål), Finnish, Czech, Romanian, Hungarian and Greek. More languages are coming soon.
 * Choose a language in the new Language tab, or let the widget follow your website language automatically, including WordPress, WPML and Polylang language settings.
@@ -376,6 +381,9 @@ This plugin does not load third-party advertising or analytics trackers on your 
 * Tested compatibility up to WordPress 7.0, improved template and uninstall compatibility checks, refreshed preview styles correctly and documented handling of WordPress widget areas.
 
 == Upgrade Notice ==
+
+= 1.2.8 =
+Choose Dutch for Belgium or the Netherlands, with clearer widget translations and regional language detection. Existing widgets and your connection stay in place.
 
 = 1.2.7 =
 Show widgets in 21 languages, enjoy more consistent builder controls and faster saved-design previews, and explore clearer Business schema options. Existing connections, shortcodes and consent choices are preserved.
