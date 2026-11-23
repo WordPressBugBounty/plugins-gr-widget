@@ -2021,7 +2021,8 @@
     "type": "enum",
     "values": [
       "light",
-      "dark"
+      "dark",
+      "transparent"
     ]
   },
   "badge_style": {
@@ -2237,12 +2238,12 @@
     "type": "text"
   },
   "review_request_avatar_size": {
-    "type": "size"
+    "type": "text"
   },
   "review_request_avatar_count": {
-    "type": "number",
-    "min": 0,
-    "max": 1000
+    "type": "int",
+    "min": 1,
+    "max": 8
   },
   "badge_avatar_count": {
     "type": "number",
@@ -2303,7 +2304,8 @@
     "values": [
       "auto",
       "full",
-      "custom"
+      "custom",
+      "fit"
     ]
   },
   "widget_width_custom": {
@@ -2532,7 +2534,7 @@
     "allow_px": true
   },
   "review_ribbon_header_avatar_size": {
-    "type": "size"
+    "type": "text"
   },
   "google_logo_style": {
     "type": "enum",
@@ -2556,47 +2558,28 @@
     ]
   },
   "spacing_padding_y": {
-    "type": "enum",
-    "values": [
-      "8px",
-      "5px",
-      "10px",
-      "19px",
-      "",
-      "18px",
-      "12px",
-      "9px"
-    ]
+    "type": "number",
+    "min": 0,
+    "max": 48,
+    "allow_px": true
   },
   "spacing_padding_x": {
-    "type": "enum",
-    "values": [
-      "12px",
-      "8px",
-      "15px",
-      "22px",
-      "",
-      "20px",
-      "14px"
-    ]
+    "type": "number",
+    "min": 0,
+    "max": 48,
+    "allow_px": true
   },
   "spacing_gap": {
-    "type": "enum",
-    "values": [
-      "",
-      "6px",
-      "16px",
-      "15px",
-      "20px",
-      "8px"
-    ]
+    "type": "number",
+    "min": 0,
+    "max": 48,
+    "allow_px": true
   },
   "spacing_section_gap": {
-    "type": "enum",
-    "values": [
-      "",
-      "24px"
-    ]
+    "type": "number",
+    "min": 0,
+    "max": 48,
+    "allow_px": true
   },
   "widget_padding_top": {
     "type": "number",
@@ -3562,7 +3545,8 @@
       "based_on_google_reviews",
       "reviews_on_google",
       "based_on_reviews",
-      "google_reviews_title"
+      "google_reviews_title",
+      "reviews"
     ]
   },
   "flyout_review_count_label_after": {
@@ -3585,8 +3569,8 @@
   "flyout_max_reviews_mode": {
     "type": "enum",
     "values": [
-      "custom",
-      "max"
+      "max",
+      "custom"
     ]
   },
   "flyout_max_reviews": {
@@ -3668,5 +3652,113 @@
   },
   "flyout_review_count_label_before": {
     "type": "text"
+  },
+  "language_mode": {
+    "type": "enum",
+    "values": [
+      "auto",
+      "fixed"
+    ]
+  },
+  "ai_summary_language_override": {
+    "type": "enum",
+    "values": [
+      "follow",
+      "en",
+      "nl",
+      "fr",
+      "de",
+      "es",
+      "it",
+      "pt",
+      "pl",
+      "uk",
+      "ar",
+      "zh",
+      "ja",
+      "tr",
+      "sv",
+      "da",
+      "nb",
+      "fi",
+      "cs",
+      "ro",
+      "hu",
+      "el"
+    ]
+  },
+  "custom_css": {
+    "type": "css"
+  },
+  "slider_footer_action": {
+    "type": "enum",
+    "values": [
+      "google",
+      "panel"
+    ]
+  },
+  "slider_footer_label": {
+    "type": "text"
+  },
+  "slider_footer_show": {
+    "type": "bool"
+  },
+  "slider_footer_show_logo": {
+    "type": "bool"
+  },
+  "slider_pagination_show": {
+    "type": "bool"
+  },
+  "slider_pagination_size": {
+    "type": "int",
+    "min": 4,
+    "max": 24
+  },
+  "review_mosaic_show_score": {
+    "type": "bool"
+  },
+  "ai_summary_language": {
+    "type": "enum",
+    "values": [
+      "en",
+      "nl",
+      "fr",
+      "de",
+      "es",
+      "it",
+      "pt",
+      "pl",
+      "uk",
+      "ar",
+      "zh",
+      "ja",
+      "tr",
+      "sv",
+      "da",
+      "nb",
+      "fi",
+      "cs",
+      "ro",
+      "hu",
+      "el"
+    ]
+  },
+  "ai_summary_text": {
+    "type": "text"
+  },
+  "ai_summary_list": {
+    "type": "text"
+  },
+  "ai_summary_regenerated_at": {
+    "type": "text"
+  },
+  "ai_summary_review_count": {
+    "type": "int",
+    "min": 0,
+    "max": 100000
+  },
+  "ai_summary_themes": {
+    "type": "list",
+    "item": "text"
   }
 }

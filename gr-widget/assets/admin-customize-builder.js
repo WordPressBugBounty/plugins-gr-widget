@@ -111,13 +111,41 @@
             .replace(/"/g, '&quot;');
     }
 
+    // Older service responses may still group schema in Settings or omit Language.
+    function ensureLanguageSeoTabs(editor) {
+        editor = editor || {};
+        var builder = editor.builder = editor.builder || {};
+        var fields = builder.fields = Array.isArray(builder.fields) ? builder.fields : [];
+        fields.forEach(function(field){
+            if (['settings','options'].indexOf(field.section)>=0 && field.key!=='enable_json_ld') {
+                var style=['widget_align','widget_width_mode','widget_width_custom','badge_alignment','pill_alignment','widget_outer_spacing'].indexOf(field.key)>=0;
+                field.section=style?'style':'layout';if(style)field.group='layout_spacing';
+            }
+        });
+        var seoField = fields.find(function (field) { return field.key === 'enable_json_ld'; });
+        if (seoField) seoField.section = 'seo';
+        else { seoField = {key:'enable_json_ld',type:'checkbox',section:'seo',group:'json_ld',label:'Enable review & rating schema',locked:true,upgrade_feature:'json_ld'}; fields.push(seoField); }
+        if (!fields.some(function (field) { return field.key === 'language'; })) fields.push({key:'language',type:'select',section:'language',label:'Widget language',options:[{"value":"auto","label":"Automatic — Website language"},{"value":"en","label":"English"},{"value":"nl","label":"Nederlands"},{"value":"fr","label":"Français"},{"value":"de","label":"Deutsch"},{"value":"es","label":"Español"},{"value":"it","label":"Italiano"},{"value":"pt","label":"Português"},{"value":"pl","label":"Polski"},{"value":"uk","label":"Українська"},{"value":"ar","label":"العربية"},{"value":"zh","label":"中文（简体）"},{"value":"ja","label":"日本語"},{"value":"tr","label":"Türkçe"},{"value":"sv","label":"Svenska"},{"value":"da","label":"Dansk"},{"value":"nb","label":"Norsk (bokmål)"},{"value":"fi","label":"Suomi"},{"value":"cs","label":"Čeština"},{"value":"ro","label":"Română"},{"value":"hu","label":"Magyar"},{"value":"el","label":"Ελληνικά"}]});
+        var sections = (builder.sections || []).filter(function (section) { return ['language','seo','settings','options'].indexOf(section.id)<0; });
+        var install = sections.findIndex(function (section) { return section.id === 'install'; });
+        sections.splice(install < 0 ? sections.length : install,0,
+            {id:'language',title:'Language',subtitle:'Choose the language visitors see in your widget.'},
+            {id:'seo',title:'SEO',subtitle:'Review and rating structured data',locked:!!seoField.locked,upgrade_feature:'json_ld'});
+        var order=['layout','reviews','style','customize','ai-summary','panel','language','seo','install'];
+        sections.sort(function(a,b){return order.indexOf(a.id)-order.indexOf(b.id);});
+        sections.forEach(function(section){if(section.id==='ai-summary')section.title='AI Summary';});
+        builder.sections = sections;
+        return editor;
+    }
+
     function readEditor() {
+        if (activeEditorRef && activeEditorRef.builder) return activeEditorRef;
         var $json = $('#grwi-customize-editor');
         if (!$json.length) {
             return {};
         }
         try {
-            return JSON.parse($json.text() || '{}') || {};
+            return ensureLanguageSeoTabs(JSON.parse($json.text() || '{}') || {});
         } catch (e) {
             return {};
         }
@@ -170,7 +198,7 @@
             }
             return copy;
         });
-        return editor;
+        return ensureLanguageSeoTabs(editor);
     }
 
     function layoutFullDefaultsForEditor(editor) {
@@ -495,15 +523,9 @@
             return configFlagTruthy(config, 'google_logo_show_bg');
         }
         if (rule === 'google_logo_chrome') {
-            if (withoutChrome.indexOf(layout) >= 0) {
-                return false;
-            }
             return configFlagTruthy(config, 'google_logo_show_bg') || configFlagTruthy(config, 'google_logo_show_border');
         }
         if (rule === 'google_logo_border') {
-            if (withoutChrome.indexOf(layout) >= 0) {
-                return false;
-            }
             return configFlagTruthy(config, 'google_logo_show_border');
         }
         if (rule === 'review_count' || rule === 'read_more' || rule === 'view_all' || rule === 'write_review') {
@@ -590,7 +612,7 @@
     function normalizeBuilderWidgetWidthMode(value, layout) {
         if (layoutUsesFixedWidth(layout)) return 'auto';
         var v = String(value == null ? '' : value).toLowerCase();
-        if (v === 'fit') v = 'auto';
+        if (v === 'fit') return isFeedLayoutKey(layout) ? 'fit' : 'auto';
         if (v === 'fixed') return defaultWidgetWidthModeForLayout(layout);
         if (v === 'custom' || v === 'full') return v;
         if (v === 'auto') return isFeedLayoutKey(layout) ? 'full' : 'auto';
@@ -601,7 +623,7 @@
         var mode = normalizeBuilderWidgetWidthMode(config && config.widget_width_mode, layout);
         if (layoutUsesFixedWidth(layout)) return true;
         if (mode === 'full') return false;
-        if (isFeedLayoutKey(layout)) return mode === 'custom';
+        if (isFeedLayoutKey(layout)) return mode === 'custom' || mode === 'fit';
         return true;
     }
 
@@ -1001,8 +1023,9 @@
         options = options || {};
         var showLock = !!options.locked || !!options.premiumPreview;
         var html = '<span class="grw-collapse__label">';
-        html += '<span class="grw-collapse__title">' + escHtml(title) + '</span>';
-        if (showLock) {
+        if (options.iconHtml) html += options.iconHtml;
+        html += '<span class="grw-collapse__title">' + escHtml(String(title).replace(/(^|[\s/&—-])([a-z])/g, function (_, prefix, letter) { return prefix + letter.toUpperCase(); })) + '</span>';
+        if (showLock || options.requirementTag) {
             html += options.pill
                 ? '<span class="grw-collapse__pill grw-plan-badge grw-plan-badge--compact' +
                     (options.plan === 'business' ? ' grw-plan-badge--business' : '') +
@@ -3283,9 +3306,7 @@
             }
             if (isFeedLayoutKey(layout)) {
                 field = $.extend({}, field, {
-                    options: (field.options || []).filter(function (opt) {
-                        return String(opt.value) !== 'auto';
-                    })
+                    options: (field.options || []).map(function (opt) { return Object.assign({},opt,{value:opt.value==='auto'?'fit':opt.value}); })
                 });
             }
         }
@@ -4002,6 +4023,63 @@
         ]);
     }
 
+    // Render every applicable schema control, including newly added web controls.
+    // Existing composed accordions keep their layout; new controls join the matching group.
+    function renderUnrepresentedCustomizeControls(html, editor, config, layout, lockedChrome, sectionId) {
+        sectionId=sectionId || 'customize';
+        var builder = editor.builder || {}, candidates = (builder.fields || []).filter(function (field) { return field.section === sectionId && field.key !== 'custom_css'; }).slice();
+        (sectionId==='customize' ? builder.colors || [] : []).forEach(function (field) { candidates.push(Object.assign({type:'color',group:field.customize_group || 'widget'},field)); });
+        (builder.spacing_elements || []).forEach(function (entry) {
+            var owner=String(entry.element).indexOf('ai_summary_')===0?'ai-summary':'customize';
+            if(owner!==sectionId)return;
+            Object.keys(entry.keys || {}).forEach(function (side) {
+                candidates.push({key:entry.keys[side],type:'number',label:entry.label+' · '+side,section:'customize',group:(CUSTOMIZE_SPACING_NEST[entry.element] || {}).parent || 'widget',layouts:entry.layouts,min:0,max:200,locked:!editor.can_use_builder_customize,upgrade_feature:'advanced_customisation'});
+            });
+        });
+        (builder.typography && builder.typography.roles || []).forEach(function (role) {
+            var owner=/^ai_summary_/.test(role.role)?'ai-summary':/^flyout_/.test(role.role)?'panel':'customize';
+            if(owner!==sectionId)return;
+            ['size','color','weight'].forEach(function (kind) {
+                var key=role[kind+'_key'];if (!key) return;
+                candidates.push({key:key,type:kind==='color'?'color':kind==='weight'?'select':'text',label:role.label+' · '+kind,section:'customize',group:(CUSTOMIZE_SPACING_NEST[role.role] || {}).parent || 'widget',layouts:role.layouts,options:builder.typography.weight_options,locked:role.locked,upgrade_feature:role.upgrade_feature});
+            });
+        });
+        var present={},match,re=/data-config-key=["']([^"']+)["']/g;
+        while ((match=re.exec(html))) present[match[1]]=true;
+        var extras={}, titles={review_request:'Review request',title:'Widget title',pagination:'Pagination',verified_badge:'Verified badge'};
+        candidates.forEach(function (field) {
+            if (!field || !field.key || !fieldVisible(field,config,layout)) return;
+            var keys=field.sides ? Object.keys(field.sides).map(function(side){return field.sides[side];}) : [field.key];
+            if (keys.every(function(key){return present[key];})) return;
+            var rendered=renderField(field,config,layout); if (!rendered) return;
+            var group=field.group || 'widget';
+            extras[group]=(extras[group] || '')+rendered;
+            re.lastIndex=0;while ((match=re.exec(rendered))) present[match[1]]=true;
+        });
+        if (typeof document !== 'undefined' && document.createElement) {
+            var root=document.createElement('div'); root.innerHTML=html;
+            Object.keys(extras).forEach(function(group){
+                var parent=root.querySelector('[data-grwi-accordion-key="'+group+'"] > .grw-collapse__body');
+                if (parent) parent.insertAdjacentHTML('beforeend',extras[group]);
+                else root.insertAdjacentHTML('beforeend',renderSectionAccordion(titles[group] || GROUP_LABELS[group] || group.replace(/_/g,' '),extras[group],'',group,lockedChrome));
+            });
+            return root.innerHTML;
+        }
+        Object.keys(extras).forEach(function(group){ html+=renderSectionAccordion(titles[group] || GROUP_LABELS[group] || group.replace(/_/g,' '),extras[group],'',group,lockedChrome); });
+        return html;
+    }
+
+    function resetAppearanceConfig(editor, current) {
+        var contract=window.GrwiBuilderReset || {}, layout=(editor.builder || {}).layout || editor.layout || 'badge_card';
+        var preview=(editor.builder || {}).preview || {}, bundle=(preview.layout_full_defaults_by_layout || {})[layout] || preview.layout_full_defaults || {};
+        bundle=bundle[layout] || bundle;
+        var defaults=Object.assign({},(contract.defaults || {})[layout] || {},bundle.light || bundle);
+        var next=Object.assign({},current || editor.config || {});
+        (contract.keys || []).forEach(function(key){if(Object.prototype.hasOwnProperty.call(defaults,key))next[key]=defaults[key];});
+        next.hide_branding=true;next.show_branding=false;
+        return next;
+    }
+
     function renderCustomizeSection(editor) {
         var builder = editor.builder || {};
         var config = editor.config || {};
@@ -4164,13 +4242,13 @@
 
             var footerFields = groups.feed_footer_button || [];
             var footerShow = footerFields.filter(function (field) {
-                return /_show_view_all$/.test(String(field.key || ''));
+                return field.key === 'slider_footer_show' || /_show_view_all$/.test(String(field.key || ''));
             });
             var footerBehaviour = footerFields.filter(function (field) {
-                return field.key === 'feed_review_button_mode' || field.key === 'feed_footer_button_fixed_hint';
+                return field.key === 'feed_review_button_mode' || field.key === 'feed_footer_button_fixed_hint' || field.key === 'slider_footer_label' || field.key === 'slider_footer_action';
             }).concat(loadMoreFields || []);
             var footerAppearance = footerFields.filter(function (field) {
-                return field.key === 'feed_footer_button_bg_color' || field.key === 'feed_footer_button_border_color';
+                return field.key === 'feed_footer_button_bg_color' || field.key === 'feed_footer_button_border_color' || field.key === 'slider_footer_show_logo';
             });
             var footerTypo = footerFields.filter(function (field) {
                 return String(field.key || '').indexOf('typo_link_') === 0;
@@ -4205,7 +4283,7 @@
             footerBody += wrapFeatureChildren(footerChildren, {
                 offTooltip: 'Turn on Show footer button to customise these options.',
             });
-            accordionHtml += renderSectionAccordion('Footer Button', footerBody, '', 'feed_footer_button', lockedChrome);
+            accordionHtml += renderSectionAccordion('Footer', footerBody, '', 'feed_footer_button', lockedChrome);
         } else {
             var showHideBody = renderVisibilityToggles(visibility.toggles, config, layout);
             accordionHtml += renderSectionAccordion('Show / Hide', showHideBody, '', 'customize_visibility', lockedChrome);
@@ -4279,6 +4357,10 @@
             );
         }
 
+        accordionHtml = renderUnrepresentedCustomizeControls(accordionHtml, editor, config, layout, lockedChrome);
+
+        accordionHtml += renderSectionAccordion('Custom CSS', renderFieldsHtml(groups.custom_css || [], config, layout, upgradeUrl, renderedUpgradeFeatures, upgrade), '', 'custom_css', lockedChrome);
+
         var html = '<div class="grw-style-accordions" data-grwi-section-accordions data-grwi-exclusive-parents="customize">' +
             accordionHtml +
             '</div>';
@@ -4288,7 +4370,7 @@
                 '</div>' +
                 renderCustomizeTrialCard(editor);
         }
-        return html;
+        return html + '<div class="grw-customize-reset" style="margin-top:20px"><button type="button" class="button" data-grwi-reset-appearance>Reset to default styling</button></div>';
     }
 
     function renderElementOrder(elementOrder, config, options) {
@@ -4642,7 +4724,7 @@
         var html = '<div class="grw-style-accordions" data-grwi-style-accordions data-grwi-exclusive-parents="style">';
 
         var themeBody = '';
-        themeBody += '<p class="grw-field__hint">Basic styling: choose a light or dark theme.</p>';
+        themeBody += '<p class="grw-field__hint">Basic styling: choose a light, dark, or transparent theme.</p>';
         themeBody += renderFieldsHtml(groups.theme || [], config, layout, upgradeUrl, renderedUpgradeFeatures, builder.upgrade || {}, {
             fieldOptions: { omitLabel: true },
         });
@@ -4663,8 +4745,6 @@
             valueKey: 'font_family_summary',
         } : {}));
 
-        html += '<p class="grw-style-customize-hint">Looking for colours, spacing and typography? ' +
-            '<button type="button" class="grw-style-customize-hint__link" data-grwi-open-section="customize">Open Customize</button>.</p>';
 
         html += '</div>';
         return html;
@@ -4881,6 +4961,18 @@
             '</div>';
     }
 
+    function layoutCategoryIconSvg(key) {
+        var paths = {
+            badges: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>',
+            carousels: '<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M2 7v10M22 7v10m-12-7 4 2-4 2Z"/>',
+            grids: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+            highlights: '<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-1 1v-9.5a8.5 8.5 0 0 1 17 0Z"/><path d="M8 9H6v3h3V9m7 0h-2v3h3V9"/>',
+            stickers: '<path d="M20 13 13 20a2 2 0 0 1-3 0L3 13V4h9l8 7a1.5 1.5 0 0 1 0 2Z"/><circle cx="7.5" cy="8.5" r="1"/>',
+            collect: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 6 9 7 9-7M9 17h6"/>',
+        };
+        return '<span class="grw-layout-category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (paths[key] || paths.grids) + '</svg></span>';
+    }
+
     function renderLayoutSection(editor) {
         var builder = editor.builder || {};
         var selectedLayout = builder.layout || editor.layout || 'badge_card';
@@ -4890,7 +4982,7 @@
         var sections = layoutPickerSections(editor);
         var i18nLocal = cfg.i18n || {};
         var upgradeUrl = editor.upgrade_url || cfg.upgradeUrl || '';
-        var html = '<div class="grw-customize-layout" data-grwi-layout-picker>';
+        var html = '<div class="grw-customize-layout grw-style-accordions" data-grwi-layout-picker>';
         var hasLocked = false;
 
         if (!sections.length) {
@@ -4903,22 +4995,17 @@
             if (!layouts.length) {
                 return;
             }
-            html += '<section class="grw-layout-category grw-customize-layout__category" aria-label="' + escHtml(section.title || '') + '">';
-            html += '<header class="grw-layout-category__head">';
-            html += '<p class="grw-layout-category__title">' + escHtml(section.title || '') + '</p>';
-            if (section.hint) {
-                html += '<p class="grw-layout-category__hint">' + escHtml(section.hint) + '</p>';
-            }
-            html += '</header>';
-            html += '<div class="grw-layout-picker grw-customize-layout__grid">';
+            var categoryBody = section.hint ? '<p class="grw-field__hint">' + escHtml(section.hint) + '</p>' : '';
+            categoryBody += '<div class="grw-layout-picker grw-customize-layout__grid">';
             layouts.forEach(function (layoutKey) {
                 var meta = catalog[layoutKey] || { key: layoutKey, label: layoutKey, locked: false, entitlement: 'unlinked' };
                 if (meta.locked) {
                     hasLocked = true;
                 }
-                html += renderLayoutCardHtml(layoutKey, meta, selectedLayout, theme);
+                categoryBody += renderLayoutCardHtml(layoutKey, meta, selectedLayout, theme);
             });
-            html += '</div></section>';
+            categoryBody += '</div>';
+            html += renderSectionAccordion(section.title || section.id, categoryBody, '', 'layout_category_' + section.id, {iconHtml:layoutCategoryIconSvg(section.id)});
         });
 
         if (hasLocked) {
@@ -4982,6 +5069,8 @@
     function renderAiSummaryHiddenFields(config) {
         var pairs = [
             ['ai_summary_text', ''],
+            ['ai_summary_language', 'en'],
+            ['ai_summary_themes', '[]'],
             ['ai_summary_list', ''],
             ['ai_summary_regenerated_at', ''],
             ['ai_summary_review_count', '0']
@@ -4991,6 +5080,7 @@
             if (val == null || val === '') {
                 val = pair[1];
             }
+            if (Array.isArray(val)) val=JSON.stringify(val);
             return '<input type="hidden" data-config-key="' + escHtml(pair[0]) + '" value="' + escHtml(String(val)) + '" />';
         }).join('');
     }
@@ -5075,7 +5165,8 @@
         childHtml += renderFeatureChildAccordion('Summary Label', labelHtml, '', 'ai_label');
         childHtml += renderFeatureChildAccordion('Summary Stars', starHtml, '', 'ai_stars');
 
-        var parentBody = enableHtml +
+        var generateHtml = '<p><button type="button" class="button button-secondary" data-grwi-generate-ai-summary' + (aiLocked ? ' disabled' : '') + '>Generate summary</button></p>';
+        var parentBody = enableHtml + generateHtml +
             wrapFeatureChildren(childHtml, {
                 attrs: ' data-grwi-ai-summary-controls',
                 offTooltip: 'Turn on Show AI summary card to customise these options.',
@@ -5385,13 +5476,36 @@
             if (!field || !placementFieldKeys[field.key] || seen[field.key]) {
                 return;
             }
-            if (field.section && field.section !== 'settings' && field.section !== 'options') {
+            if (field.section && field.section !== 'settings' && field.section !== 'options' && field.section !== 'layout') {
                 return;
             }
             seen[field.key] = true;
             fields.push(field);
         });
         return fields;
+    }
+
+    function renderSeoSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures) {
+        var fields = groups.json_ld || [];
+        var field = fields[0] || jsonLdExplainerField(editor);
+        if (!field) return '';
+        var locked = !!field.locked;
+        var enabled = config.enable_json_ld !== false && config.enable_json_ld !== '0' && config.enable_json_ld !== 0 && (!locked || editorIsPreviewFirst());
+        var shared = window.GrwiSeoContent || {};
+        var toggle = Object.assign({}, field, {label:enabled ? 'Active' : 'Disabled',hint:''});
+        var body = '<div class="wb-seo-panel' + (enabled ? '' : ' is-off') + '"><section class="wb-seo-control" aria-label="Review and rating schema"><div class="wb-seo-setting">' +
+            renderField(toggle, config, layout).replace('class="grw-switch__label"', 'class="grw-switch__label" data-grwi-seo-state').replace('role="switch"', 'role="switch" aria-label="Review &amp; rating schema"') + '</div><p class="wb-seo-lead">' + escHtml(shared.leadText || 'Turn the reviews visitors see into structured data that search engines and AI systems can read.') + '</p>';
+        if (locked) {
+            body += '<p class="wb-seo-availability">Available with Business and Agency.</p>';
+            var prompt = featurePromptFromEditor(editor, 'json_ld') || {};
+            var eligibility=customizeTrialEligibility(editor);
+            var cta=eligibility===true ? 'Start 7-day Business trial' : 'Get Business';
+            var modalBody=shared.upgradeBody || 'Give Google the structured review data it needs to show your rating, stars and review count on eligible pages. Make your business stand out in search, build trust before the click, and attract more customers.';
+            var checkout=prompt.checkout_url || customizeCheckoutUrl(editor,eligibility===true,'business') || upgradeUrl;
+            if (!prompt.hide_actions) body += '<p class="wb-seo-upgrade-actions"><button type="button" class="grw-customize-trial-card__cta" data-grwi-trial-cta="1" data-feature="json_ld" data-plan="business" data-trial-eligible="' + (eligibility===null ? '' : eligibility ? '1' : '0') + '" data-checkout-url="' + escHtml(checkout) + '" data-feature-label="review structured data" data-modal-title="' + escHtml(shared.upgradeTitle || 'Turn your reviews into stars in Google search') + '" data-modal-body="' + escHtml(modalBody) + '" data-modal-supporting="' + escHtml(trialSupportingCopy('business',eligibility,{},editor)) + '">' + escHtml(cta) + '</button></p>';
+        }
+        body += '</section>' + (shared.bodyHtml || '') + '</div>';
+        return renderSectionAccordion('Review & rating schema', body, ' open', 'json_ld', {locked:locked,plan:'business',pill:'Business',requirementTag:true});
     }
 
     function renderSettingsSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures) {
@@ -5421,19 +5535,6 @@
         });
         html += renderGroupCard('outer_spacing', groups.outer_spacing || [], config, layout, upgradeUrl, renderedUpgradeFeatures, upgrade, {
             asAccordion: true,
-        });
-        var jsonFields = groups.json_ld || [];
-        var jsonLocked = jsonFields.some(function (field) {
-            return !!field.locked && fieldVisible(field, config, layout);
-        });
-        html += renderGroupCard('json_ld', jsonFields, config, layout, upgradeUrl, renderedUpgradeFeatures, upgrade, {
-            asAccordion: true,
-            showLockedControls: true,
-            locked: jsonLocked,
-            plan: 'business',
-            title: GROUP_LABELS.json_ld,
-            bodyPrepend: jsonLdExplainerFigureHtml(editor, jsonFields[0] || null),
-            bodyAppend: jsonLocked && !editorIsPreviewFirst() ? renderUpsellCard(editor, 'json_ld') : '',
         });
         var legacyPhotoFields = groups.photos || [];
         if (legacyPhotoFields.length) {
@@ -5472,7 +5573,8 @@
         // Hard-block only non-explore gated sections (filters/customize/AI stay explorative).
         if (section.locked && section.upgrade_feature
             && sectionId !== 'customize'
-            && sectionId !== 'ai-summary') {
+            && sectionId !== 'ai-summary'
+            && sectionId !== 'seo') {
             return renderUpgradeCard(
                 (builder.upgrade || {})[section.upgrade_feature],
                 upgradeUrl,
@@ -5485,11 +5587,11 @@
         }
 
         if (sectionId === 'layout') {
-            return renderLayoutSection(editor);
+            return renderLayoutSection(editor) + renderSettingsSection(editor, groupFields(builder.fields || [], 'layout'), config, layout, upgradeUrl, {});
         }
 
         if (sectionId === 'style') {
-            return renderStyleSection(editor);
+            return '<div class="grw-panel-accordion-stack">' + renderStyleSection(editor) + renderGroupCard('layout_spacing', (builder.fields || []).filter(function(field){return field.section==='style' && field.group==='layout_spacing';}), config, layout, upgradeUrl, {}, builder.upgrade || {}, {asAccordion:true,title:'Layout & spacing'}) + '<p class="grw-style-customize-hint">Looking for colours, spacing and typography? <button type="button" class="grw-style-customize-hint__link" data-grwi-open-section="customize">Open Customize</button>.</p></div>';
         }
 
         var html = '';
@@ -5511,15 +5613,19 @@
         var groupOptions = useAccordions ? { asAccordion: true } : {};
 
         if (sectionId === 'ai-summary') {
-            return renderAiSummarySection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures, builder, aiLocked);
+            return renderUnrepresentedCustomizeControls(renderAiSummarySection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures, builder, aiLocked), editor, config, layout, {locked:aiLocked,plan:'business'}, 'ai-summary');
         }
 
         if (sectionId === 'panel') {
-            return renderPanelSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures);
+            return '<div class="grw-panel-accordion-stack">' + renderUnrepresentedCustomizeControls(renderPanelSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures), editor, config, layout, {}, 'panel') + '</div>';
         }
 
         if (sectionId === 'settings') {
             return renderSettingsSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures);
+        }
+
+        if (sectionId === 'seo') {
+            return renderSeoSection(editor, groups, config, layout, upgradeUrl, renderedUpgradeFeatures);
         }
 
         if (sectionId === 'customize') {
@@ -6334,12 +6440,14 @@
 
     window.GrwiBuilder = {
         readEditor: readEditor,
+        ensureLanguageSeoTabs: ensureLanguageSeoTabs,
         renderAllPanels: renderAllPanels,
         renderSectionBody: renderSectionBody,
         applyReviewCuration: applyReviewCuration,
         mergeHostedOverlay: mergeHostedOverlay,
         layoutPickerDemoConfig: layoutPickerDemoConfig,
         layoutFullDefaultsForEditor: layoutFullDefaultsForEditor,
+        resetAppearanceConfig: resetAppearanceConfig,
         applyLayoutChange: applyLayoutChange,
         layoutFamilyFromLayout: layoutFamilyFromLayout,
         syncAiSummarySectionModel: syncAiSummarySectionModel,

@@ -4,11 +4,11 @@ Tags: google reviews, google reviews widget, google reviews embed, business revi
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Google reviews widget for WordPress — 34 layouts, shortcode or block, no API keys. Unlimited views.
+Google reviews widget for WordPress — 21 languages, 34 layouts, shortcode or block. No API keys. Unlimited views.
 
 == Description ==
 
@@ -21,6 +21,8 @@ No account is required to get started. Link a free [GRWidget.com](https://grwidg
 🚀 **Unlimited views on every plan** — including free. Your widgets are not metered by page views.
 
 = Why site owners choose this Google reviews widget =
+
+* 🌐 **Multilingual widgets on every plan** — English, Dutch, French, German, Spanish, Italian, Portuguese, Polish, Ukrainian, Arabic, Chinese (Simplified), Japanese, Turkish, Swedish, Danish, Norwegian (Bokmål), Finnish, Czech, Romanian, Hungarian and Greek. Detect your page language automatically or choose a language in the builder. More languages will be added soon. Original reviews and reviewer names stay unchanged.
 
 * 🔑 **No Google API keys** — search by business name; we handle Google data on our servers
 * 🧩 **Shortcode + Gutenberg block** — `[grwi_widget id="your-key"]` or the **GR Widget** block to embed Google reviews
@@ -261,126 +263,122 @@ This plugin does not load third-party advertising or analytics trackers on your 
 
 == Changelog ==
 
+= 1.2.7 =
+* Display your widget in 21 languages on every plan: English, Dutch, French, German, Spanish, Italian, Portuguese, Polish, Ukrainian, Arabic, Chinese (Simplified), Japanese, Turkish, Swedish, Danish, Norwegian (Bokmål), Finnish, Czech, Romanian, Hungarian and Greek. More languages are coming soon.
+* Choose a language in the new Language tab, or let the widget follow your website language automatically, including WordPress, WPML and Polylang language settings.
+* Keep widget text in step when your page changes language without reloading. Your reviews, business name, reviewer names and current widget state stay unchanged.
+* Read Arabic widget text from right to left, with language-appropriate plurals, dates and numbers across supported languages.
+* See translated layout labels and review counts correctly, including when switching languages in the live preview. Language changes work directly in the plugin, and the preview no longer jumps back to the top while scrolling.
+* Create AI summaries in your chosen widget language, or choose a separate summary language, on eligible plans. Preview a generated summary before publishing; your plan's permissions and usage allowance still apply.
+* Use the same widget settings and clearer control groups as the web builder, including review requests, Slider footer and pagination options, and Transparent theme settings. Saved choices carry through to previews and publishing.
+* Explore review and rating schema in a dedicated SEO tab for Business and Agency, with a plan badge, an accordion that opens by default and a search-result example. The panel uses the plugin's familiar styling.
+* Find clearer Business and trial buttons, simpler schema guidance and a shorter search-stars upgrade popup. An empty button no longer appears in that popup; Get Business and Compare plans remain available.
+* See your latest saved design in dashboard thumbnails and the preview dialog, including language and review-count styling. Unpublished changes are clearly labelled, and previews load faster.
+* Return to a layout's default appearance with Reset to default styling, including its theme, font and alignment. Choose Fit Content on supported feed layouts, and preview left, centre or right placement correctly.
+* Find layouts in icon-labelled categories that open as accordions and start closed.
+* Preview the layout you are editing even when your published widget uses a different design. Loading review data no longer replaces your saved draft or changes made while it loads.
+* Find Style guidance below the controls, with consistent spacing and capitalised titles across Style and Review Panel accordions. The Check this page button also has more breathing room.
+* Start the dashboard's premium comparison on Business by default.
+* Save valid widget settings and spacing choices reliably. Preview improvements also reach the builder sooner instead of waiting for older cached settings to refresh.
+* Keep unlinked installations within their allowance of one widget and five reviews, including older installations. Linked Free and paid accounts keep their own allowances.
+* Add custom widget CSS on Site and higher plans, with the same plan permissions as the web builder. JavaScript, PHP and HTML code controls remain unavailable.
+* Update without reconnecting: existing connections, shortcodes, blocks and consent choices are preserved.
+
 = 1.2.6 =
-* Fixed an issue introduced in 1.2.5 that could prevent existing Google review widgets from appearing after a plugin update.
-* Restored previously authorised connections and existing widget displays without requiring eligible customers to reconnect.
-* Added a clear WordPress admin notice for sites that need to confirm or restore their connection.
-* Preserved explicit consent requirements for new installations and respected existing consent decisions.
+* Fixed a problem introduced in 1.2.5 that could stop existing Google review widgets appearing after an update.
+* Restored previously authorised connections and widget displays without asking eligible customers to reconnect.
+* Added a clear notice when a site needs to confirm or restore its connection.
+* Kept consent choices intact and continued to ask new installations for permission before connecting.
 
 = 1.2.5 =
-* Require explicit service consent for all service requests and embeds, including upgraded installations.
-* Detect embeds only in rendered content; inactive widget areas do not trigger remote scripts.
-* Remove custom CSS controls and reject arbitrary code at the WordPress configuration save boundary.
-* Validate and sanitize supported configuration fields before forwarding them to the hosted service.
-
+* Required explicit consent before connecting to the service or displaying embeds, including after an upgrade.
+* Loaded remote widget scripts only for embeds in displayed content; inactive widget areas no longer triggered them.
+* Removed custom CSS controls at this version and blocked unsupported code when saving settings.
+* Checked and cleaned supported settings before sending them to GR Widget, helping prevent invalid configurations.
 
 = 1.2.4 =
-**Compliance and privacy**
-* New installations require an explicit administrator action before site registration with GRWidget.com. Plugin activation does not transmit site data.
-* Added a local setup disclosure describing the hosted service and transmitted data.
-* Prevented unauthorised background requests and initial widget API calls before setup.
-* Kept previously linked or registered sites connected and retained existing shortcodes.
-* Stopped suppressing other plugins' WordPress admin notices and changed in-plugin review prompts to welcome positive or critical reviews without star graphics.
-* Preserved credential recovery for existing registered sites without enabling service requests on new installations before consent.
-* Open the account-link popup directly from the user's click before requesting the connection URL, reducing browser popup blocking.
-* Corrected translation context, input sanitisation, and template issues reported by Plugin Check.
-* Restricted API calls to HTTPS.
+* Let administrators choose when a new installation registers with GRWidget.com. Activating the plugin alone no longer sent site data.
+* Added a setup explanation of the hosted service and the information shared with it.
+* Prevented unauthorised background connections and widget requests before setup.
+* Preserved existing linked or registered connections and shortcodes, and recovered existing site credentials without connecting new sites before consent.
+* Restored visibility of other plugins' WordPress notices and welcomed both positive and critical plugin reviews without star graphics.
+* Opened the account-link window directly from your click to reduce popup blocking.
+* Improved translated text, checked submitted values and corrected display issues identified by WordPress Plugin Check.
+* Used HTTPS for all service connections.
 
 = 1.2.3 =
-**Added**
-* Check if a widget is live from the Widgets screen. Enter a page address and GR Widget looks for that widget’s block, shortcode, embed, or rendered markup.
-* Get help on a not-found install check. It emails support with the page, the reason, and an optional note.
+* Checked whether a widget was live from the Widgets screen. Enter a page address to look for its block, shortcode, embed or displayed widget.
+* Added Get help for unsuccessful page checks, with an email to support containing the page address, result and your optional note.
 
 = 1.2.2 =
-**Added**
-* Plan limits now include Google businesses (one Google Business Profile / Place ID). The account summary shows how many you are using, and adding another listing over that cap shows the upgrade link.
+* Showed your Google business allowance in the account summary, including how many Business Profiles / Place IDs you were using and an upgrade link when adding another would exceed your plan.
 
 = 1.2.1 =
-**Added**
-* Seventeen new layouts, so the gallery is now 34 designs. Mini review slider, Classic Carousel, Classic Slider, Classic List, Classic Grid, Classic Masonry, Inline rating & reviews, Essential rating, Text rating, Stacked rating, Micro rating strip, Quote thread, Signature showcase, Pocket proof, Reputation snapshot, Photo spotlight, and Review mosaic.
-* Search with a Google Maps link. Paste a maps.app.goo.gl share link or a Google Maps place URL and GR Widget opens that business, just as it does for a name search.
-
-**Improved**
-* A free linked account now includes 22 layouts, up from 10. Site includes 31. Business and Agency include the full set of 34.
-* Layout counts in the plugin, the upgrade notes, and this readme match the current catalog.
-
-**Fixed**
-* Minor bug fixes across business search and the layout picker.
+* Added 17 layouts, bringing the gallery to 34: Mini review slider, Classic Carousel, Classic Slider, Classic List, Classic Grid, Classic Masonry, Inline rating & reviews, Essential rating, Text rating, Stacked rating, Micro rating strip, Quote thread, Signature showcase, Pocket proof, Reputation snapshot, Photo spotlight and Review mosaic.
+* Found businesses from a Google Maps link as well as a name, including maps.app.goo.gl share links and Google Maps place URLs.
+* Increased linked Free accounts from 10 to 22 layouts. Site included 31, while Business and Agency included all 34.
+* Made layout counts consistent across the plugin, upgrade information and readme, and fixed smaller business-search and layout-picker issues.
 
 = 1.2.0 =
-
-**Added**
-* A redesigned dashboard and widget builder.
-* Draft and Live preview, so edits stay unpublished until you publish them.
-* Review curation: choose which reviews appear, sort and filter them, and set how many to display.
-* Review request, Reviews button, Review ribbon, and Avatar review badge layouts.
-* A confirmation when you copy a shortcode.
-* A new menu icon.
-
-**Improved**
-* The layout picker is clearer, and its previews match the layouts.
-* Searching for your business on Google is easier.
-* Margin controls in Customize are more compact.
-* Layouts are grouped so badges, feeds, sliders, stickers, and review requests are easier to find.
-
-**Fixed**
-* The embed script is no longer held back by delay-JavaScript tools such as WP Meteor, so widgets keep loading on Elementor pages.
-* Confirming Unlink account on the dashboard unlinks the site.
-* Other fixes across the dashboard and builder.
+* Introduced a redesigned dashboard and widget builder, with Draft and Live previews so edits could stay unpublished until ready.
+* Added review curation to choose, sort and filter reviews and set how many appeared.
+* Added Review request, Reviews button, Review ribbon and Avatar review badge layouts.
+* Added confirmation when copying a shortcode and refreshed the menu icon.
+* Made layout previews more accurate, business search easier and margin controls more compact.
+* Grouped layouts into badges, feeds, sliders, stickers and review requests to make them easier to find.
+* Kept widgets loading on Elementor pages when tools such as WP Meteor delayed JavaScript.
+* Fixed account unlinking from the dashboard and other dashboard and builder issues.
 
 = 1.1.2 =
-* Preview every layout and styling option in the builder, including ones on a higher plan.
-* Choosing a layout before a business now shows a notice in the plugin.
-* Carousel feed and Slider feed names were swapped so they match the layouts. Existing widgets look the same.
-* A default Free widget no longer asks you to upgrade for custom styling. Light theme, default font, full width, and empty spacing stay Free.
-* Outer Spacing, theme, fonts, Display Limit, and basic Review Panel options are labelled Free.
-* Switching feed layouts no longer turns on review photos. Photo settings only apply when that feed is selected.
-* Display Limit updates as you type, including after changing tabs. You can preview a higher count than your plan publishes.
-* WordPress widgets stay branding-free. Branding controls are removed from the plugin builder.
-* Linked GRWidget.com accounts can list, open, preview, and save widgets, and search for a business in wp-admin again.
-* If the widget list fails to load, you get a retry message instead of an empty screen.
+* Previewed every layout and styling option, including those on higher plans, and showed a helpful notice when choosing a layout before a business.
+* Corrected Carousel feed and Slider feed names without changing existing widget designs.
+* Stopped default Free widgets asking for a styling upgrade. Light theme, default font, full width and empty spacing stayed Free.
+* Clearly marked Outer Spacing, theme, fonts, Display Limit and basic Review Panel options as Free.
+* Kept review photos from switching on when changing feed layouts; photo choices applied to the selected feed.
+* Updated Display Limit as you typed and after changing tabs, with previews allowed to show more reviews than your plan could publish.
+* Kept WordPress widgets branding-free and removed unnecessary branding controls.
+* Restored linked accounts' widget lists, editing, previews, saving and business search in WordPress.
+* Offered a retry message if widgets could not load instead of showing an empty screen.
 
 = 1.1.1 =
-* Improvements to make linking a free GR Widget account from the plugin simpler.
-* Width controls in the WordPress Customise builder (same options as the web builder).
-* Widgets you created on GRWidget.com now appear in the WordPress plugin automatically when your account is linked. No manual refresh.
-* Stops loading the embed script twice on sites that also pasted the GR Widget script tag.
-* Gutenberg block: pick one of this site’s widgets from a list instead of pasting the embed key. You can still enter a key manually.
-* Feed layouts: mobile headers now wrap cleanly so the title, stars, and “Write a review” button no longer overlap or get cut off.
+* Made linking a free GR Widget account simpler and added the web builder's width options to WordPress.
+* Automatically showed widgets created on GRWidget.com when your account was linked, without a manual refresh.
+* Avoided loading the widget script twice on pages that also contained a pasted GR Widget script tag.
+* Let you choose a site's widget from a list in the Gutenberg block, while retaining manual widget-key entry.
+* Kept mobile feed headings, stars and Write a review buttons from overlapping or being cut off.
 
 = 1.1.0 =
-* Redesigned native Customize builder with more options and features.
-* Link a GR Widget account with a click (sign in or create an account) — no API key copy/paste.
-* Additional customisation controls in the builder.
-* Change layout from inside the builder.
-* Raise free plugin limits by linking a free GR Widget account.
-* Other minor bug fixes and improvements.
+* Redesigned Customize with more controls and options, including changing layouts inside the builder.
+* Linked an existing or new GR Widget account in one click, without copying an API key.
+* Increased free plugin allowances when linking a free account, alongside smaller fixes and improvements.
 
 = 1.0.3 =
-* Customise Review Button / Footer Button on feed widgets (show/hide, colours, and typography).
-* Style and Customize panels use closed-by-default accordions matching the web builder.
-* AI Summary live preview works in the native builder when exploring locked plans.
+* Added show/hide, colour and typography controls for feed Review and Footer buttons.
+* Organised Style and Customize into accordions that started closed, matching the web builder.
+* Fixed AI Summary live previews when exploring features on higher plans.
 
 = 1.0.2 =
-* Report a bug is now visible in the Customize left rail (matching the web builder), and still available in the top bar.
-* Linked GRWidget.com accounts can submit bug reports from the native builder (previously blocked when the site was linked).
+* Made Report a bug easier to find in the Customize sidebar while keeping it in the top bar.
+* Let linked accounts submit bug reports from the WordPress builder.
 
 = 1.0.1 =
-* Updated the plugin display name to "GR Widget – Google Reviews Widget" for clearer directory search and discoverability (no functional changes; slug, settings, and shortcodes are unchanged).
+* Renamed the plugin to "GR Widget – Google Reviews Widget" to make it easier to find in the directory. The plugin address, settings and shortcodes stayed the same.
 
 = 1.0.0 =
-* Initial public release on WordPress.org (first SVN / directory release).
-* Embed Google reviews with a shortcode or Gutenberg block — no Google API keys or sign-in required.
-* Search for your business in wp-admin, pick from five free layouts, and create up to three widgets per site.
-* Local layout picker previews and live preview in wp-admin (no external iframes); native style editor with API-backed save.
-* Reviews sync on GRWidget.com — your WordPress database does not store review content.
-* Optional GRWidget.com account linking for paid plans, more widgets, and daily sync.
-* Embed script loads only on pages that contain a widget (not site-wide).
-* WordPress.org compliance improvements: explicit site-registration consent on new installations, escaped output, nonces, uninstall cleanup, and contextual upgrade notices in wp-admin only.
-* Prefix compliance — options, cron hooks, AJAX actions, script/style handles, and localized JS objects use `grwi_` / `GRWI_`; legacy `grw_*` options migrate automatically on upgrade.
-* Tested up to WordPress 7.0; view-template and uninstall loop variables prefixed for Plugin Check; mock CSS enqueue versioned; core `sidebars_widgets` filter usage documented.
+* Launched on WordPress.org with Google review embeds through a shortcode or Gutenberg block, without Google sign-in or API keys.
+* Let you search for a business in WordPress, choose from five free layouts and create up to three widgets per site.
+* Included miniature layout previews and a live preview inside WordPress without external editor frames, with styling changes saved to the hosted service.
+* Synced reviews on GRWidget.com without storing review content in your WordPress database.
+* Offered account linking for paid plans, more widgets and daily syncing.
+* Loaded widget scripts only on pages containing widgets.
+* Added explicit registration consent, protected displayed and submitted information, cleaned up on uninstall and kept relevant upgrade notices inside WordPress admin.
+* Kept saved settings compatible during upgrades by migrating older grw_* names to the plugin's grwi_ / GRWI_ names, also used for scheduled tasks, requests, scripts and styles.
+* Tested compatibility up to WordPress 7.0, improved template and uninstall compatibility checks, refreshed preview styles correctly and documented handling of WordPress widget areas.
 
 == Upgrade Notice ==
+
+= 1.2.7 =
+Show widgets in 21 languages, enjoy more consistent builder controls and faster saved-design previews, and explore clearer Business schema options. Existing connections, shortcodes and consent choices are preserved.
 
 = 1.2.4 =
 Privacy and WordPress.org compliance update. New installations explicitly authorise GRWidget.com site registration from the setup screen. Existing registered sites and published widgets are preserved.

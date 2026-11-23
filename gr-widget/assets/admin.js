@@ -327,6 +327,18 @@
         }
     }
 
+    var savedDashboardPreviews = Object.create(null);
+    function loadSavedDashboardPreview(key) {
+        if (!savedDashboardPreviews[key]) savedDashboardPreviews[key] = new Promise(function (resolve, reject) {
+            $.post(grwiAdmin.ajaxUrl, {action:'grwi_dashboard_widget_preview',nonce:grwiAdmin.nonce,embed_key:key})
+                .done(function (response) { if (response && response.success && response.data) resolve(response.data); else reject(new Error('Saved preview unavailable')); })
+                .fail(reject);
+        });
+        return savedDashboardPreviews[key];
+    }
+
+    function savedPreviewLabel(data) { return data.preview_state === 'draft' ? 'Saved draft preview · unpublished changes' : ''; }
+
     function mountSavedWidgetPreviewFromPayload(mountEl, data) {
         if (!mountEl || !window.GrwPreview || typeof GrwPreview.mount !== 'function' || !window.GrwiPreviewOpts) {
             return false;
@@ -334,23 +346,19 @@
         var layout = data.layout || 'badge_card';
         var savedConfig = data.config || {};
         var hasCachedReviews = Array.isArray(data.reviews) && data.reviews.length > 0;
-        var reviews = hasCachedReviews ? data.reviews : layoutPickerStyleReviews();
+        var reviews = hasCachedReviews ? data.reviews : [];
         var place = placeFromWidgetPayload(data);
         prepareSavedWidgetPreviewMount(mountEl, mountEl.getAttribute('data-preview-wrapper-class') || '');
         try {
             GrwPreview.mount(
                 mountEl,
-                hostedPreviewPlace(place, reviews, {
-                    hasCachedReviews: hasCachedReviews,
-                    placeholder: !hasCachedReviews,
-                }),
+                place,
                 layout,
                 GrwiPreviewOpts.buildSavedWidgetPreviewOpts({
                     layout: layout,
                     savedConfig: savedConfig,
-                    previewMeta: savedWidgetPreviewMeta(),
+                    previewMeta: data.preview_meta || savedWidgetPreviewMeta(),
                     reviews: reviews,
-                    maxReviews: Math.min(reviews.length, 6),
                 })
             );
             return true;
@@ -2273,8 +2281,7 @@
         }
 
         var key = embedKey || $mount.data('embed-key') || $mount.data('grwidget-key') || $mount.data('grwi-embed-key') || '';
-        var apiBase = (window.grwiAdmin && grwiAdmin.apiBaseUrl) ? grwiAdmin.apiBaseUrl.replace(/\/$/, '') : '';
-        if (!key || !apiBase) {
+        if (!key) {
             if (!isStale() && typeof onComplete === 'function') {
                 onComplete(false);
             }
@@ -2303,20 +2310,10 @@
             if (isStale()) {
                 return;
             }
-            fetch(apiBase + '/widgets/' + encodeURIComponent(key) + '.json', { credentials: 'omit' })
-                .then(function (response) {
-                    if (isStale()) {
-                        return null;
-                    }
-                    if (!response.ok) {
-                        throw new Error('preview fetch failed');
-                    }
-                    return response.json();
-                })
+            loadSavedDashboardPreview(key)
                 .then(function (data) {
-                    if (!data || isStale()) {
-                        return;
-                    }
+                    if (!data || isStale()) return;
+                    $widgetPreviewModal.find('[data-grwi-saved-preview-label]').text(savedPreviewLabel(data)).prop('hidden',data.preview_state !== 'draft');
                     renderFromPayload(data);
                 })
                 .catch(function () {
@@ -2368,6 +2365,7 @@
         }
 
         widgetPreviewLastFocus = $btn;
+        $widgetPreviewModal.find('[data-grwi-saved-preview-label]').prop('hidden',true).text('');
         $widgetPreviewModal.find('#grwi-widget-preview-modal-title').text(title);
         $widgetPreviewModal.removeAttr('hidden');
         $('body').addClass('grw-modal-open');
@@ -3037,10 +3035,42 @@
         stage.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + s + ')';
     }
 
+    function mountSavedDashboardThumbnail(mockEl) {
+        if (mockEl.getAttribute('data-grw-preview-mounted') === 'loading') return false;
+        var row = mockEl.closest('.grw-widget-row');
+        var key = row && row.getAttribute('data-embed-key');
+        var target = mockEl.querySelector('[data-grw-layout-target]');
+        var stage = mockEl.querySelector('[data-grw-layout-stage]');
+        if (!key || !target || !stage) return false;
+        var request = (mockEl.__savedPreviewRequest || 0) + 1; mockEl.__savedPreviewRequest=request;
+        mockEl.setAttribute('data-grw-preview-mounted','loading');
+        loadSavedDashboardPreview(key).then(function(data){
+            if (mockEl.__savedPreviewRequest !== request || !mockEl.isConnected) return;
+            var layout=data.layout || mockEl.getAttribute('data-layout');
+            mockEl.setAttribute('data-layout',layout);
+            mockEl.__grwLayoutRecipe=layoutCardRecipeFor(layout);
+            var recipe=mockEl.__grwLayoutRecipe;
+            stage.style.width=recipe.width ? recipe.width+'px' : 'max-content';
+            target.setAttribute('data-preview-wrapper-class','grw-layout-card__target');
+            destroyWidgetPreviewMount($(target));
+            if (!mountSavedWidgetPreviewFromPayload(target,data)) throw new Error('Preview mount failed');
+            mockEl.setAttribute('data-grw-preview-mounted','1');
+            var label=row.querySelector('[data-grwi-saved-preview-label]');
+            if (!label) {label=document.createElement('small');label.setAttribute('data-grwi-saved-preview-label','');label.className='grw-widget-row__preview-state';(row.querySelector('.grw-widget-row__identity') || row).appendChild(label);}
+            label.textContent=savedPreviewLabel(data);label.hidden=data.preview_state !== 'draft';
+            if (data.layout_label) {$(row).find('.grw-widget-row__layout').text(data.layout_label);$(row).find('.grw-widget-preview-toggle').attr('data-layout-label',data.layout_label).data('layout-label',data.layout_label);}
+            layoutCardFit(mockEl);requestAnimationFrame(function(){layoutCardFit(mockEl);});
+            target.querySelectorAll('img').forEach(function(img){if(!img.complete)img.addEventListener('load',function(){layoutCardFit(mockEl);},{once:true});});
+        }).catch(function(){if(mockEl.__savedPreviewRequest===request){mockEl.setAttribute('data-grw-preview-mounted','error');target.textContent='Saved preview unavailable';}});
+        return true;
+    }
+
     function layoutCardMountMock(mockEl) {
         if (!mockEl || mockEl.getAttribute('data-grw-preview-mounted') === '1') {
             return false;
         }
+
+        if (mockEl.closest('.grw-widget-row[data-embed-key]')) return mountSavedDashboardThumbnail(mockEl);
 
         var layout = mockEl.getAttribute('data-layout') || 'badge_card';
         var theme = mockEl.getAttribute('data-preview-theme') || previewTheme;
@@ -3183,6 +3213,13 @@
             }
         }
     }
+
+    window.addEventListener('pageshow', function(event){
+        if (!event.persisted) return;
+        savedDashboardPreviews=Object.create(null);
+        document.querySelectorAll('.grw-widget-row__mock').forEach(function(mock){mock.__savedPreviewRequest=(mock.__savedPreviewRequest||0)+1;mock.removeAttribute('data-grw-preview-mounted');});
+        initLayoutCardMockPreviews();
+    });
 
     initLayoutCardMockPreviews();
 

@@ -1,0 +1,59 @@
+/* Native plugin panel colours and spacing; shared web SEO copy and search example. */
+.grw-customize .wb-seo-panel {
+    display: grid;
+    gap: 16px;
+    padding: 0;
+    background: transparent;
+    color: var(--grw-text);
+    font-family: inherit;
+}
+.grw-customize .wb-seo-panel p { margin: 0; line-height: 1.6; }
+.grw-customize .wb-seo-lead,
+.grw-customize .wb-seo-locked p,
+.grw-customize .wb-seo-benefit p { color: var(--grw-text-muted); font-size: 13px; }
+.grw-customize .wb-seo-locked { display: grid; gap: 10px; margin-top: 14px; }
+.grw-customize .wb-seo-locked .wb-seo-locked-label { color: var(--grw-brand); font-size: 12px; font-weight: 600; }
+.grw-customize .wb-seo-heading { margin: 0; color: var(--grw-text); font-size: 15px; line-height: 1.45; font-weight: 600; }
+.grw-customize .wb-seo-upgrade-actions { margin-top: 12px; }
+.grw-customize .wb-seo-status { margin-top: 6px; color: var(--grw-selected-strong); font-size: 11px; }
+.grw-customize .wb-seo-panel.is-off .wb-seo-status { color: var(--grw-text-muted); }
+.grw-customize .wb-seo-example { min-width: 0; overflow: hidden; border: 1px solid var(--grw-border); border-radius: var(--grw-radius-sm); background: var(--grw-surface-muted); }
+.grw-customize .wb-seo-example__bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 12px; color: var(--grw-text); font-size: 11px; font-weight: 600; }
+.grw-customize .wb-seo-example__sample { color: var(--grw-text-muted); font-weight: 400; }
+.grw-customize .wb-seo-serp { padding: 14px; border-top: 1px solid var(--grw-border); background: var(--grw-surface); }
+.grw-customize .wb-seo-serp__source { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.grw-customize .wb-seo-serp__favicon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; background: var(--grw-surface-muted); color: var(--grw-text-muted); }
+.grw-customize .wb-seo-serp__favicon svg { width: 17px; height: 17px; fill: currentColor; }
+.grw-customize .wb-seo-serp__site { display: grid; gap: 2px; min-width: 0; }
+.grw-customize .wb-seo-serp__name { color: var(--grw-text); font-size: 13px; line-height: 1.2; }
+.grw-customize .wb-seo-serp__url { overflow-wrap: anywhere; color: var(--grw-text-muted); font-size: 10px; }
+.grw-customize .wb-seo-serp__more { margin-left: auto; color: var(--grw-text-muted); }
+.grw-customize .wb-seo-serp__more svg { width: 16px; height: 16px; fill: currentColor; }
+.grw-customize .wb-seo-serp .wb-seo-serp__title { margin: 0 0 5px; font-size: 18px; line-height: 1.35; font-weight: 400; color: #1a0dab; }
+.grw-customize .wb-seo-serp__desc { color: var(--grw-text-muted); font-size: 12px; }
+.grw-customize .wb-seo-serp__rating { display: flex; align-items: center; gap: 5px; margin-top: 6px; color: var(--grw-text-muted); font-size: 12px; }
+.grw-customize .wb-seo-serp__stars { display: inline-flex; }
+.grw-customize .wb-seo-serp__stars svg { display: block; width: 13px; height: 13px; fill: #fbbc04; }
+.grw-customize .wb-seo-panel.is-off .wb-seo-serp__rating { display: none; }
+.grw-customize .wb-seo-caption { padding: 10px 12px; color: var(--grw-text-muted); font-size: 10px; }
+.grw-customize .wb-seo-data { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 10px 12px; border: 1px solid var(--grw-border); border-radius: var(--grw-radius-sm); background: var(--grw-surface-muted); color: var(--grw-text-muted); font-size: 11px; }
+.grw-customize .wb-seo-data code { color: var(--grw-brand); font-size: 11px; }
+.grw-customize .wb-seo-benefit { display: flex; align-items: flex-start; gap: 10px; }
+.grw-customize .wb-seo-benefit__icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: var(--grw-radius-sm); background: var(--grw-brand-light); color: var(--grw-brand); }
+.grw-customize .wb-seo-benefit b { display: block; margin-bottom: 3px; color: var(--grw-text); font-size: 13px; font-weight: 600; }
+.grw-customize .wb-seo-eligibility { padding-top: 12px; border-top: 1px solid var(--grw-border); color: var(--grw-text-muted); font-size: 12px; line-height: 1.6; }
+.grw-customize .wb-seo-eligibility summary { cursor: pointer; color: var(--grw-text); font-size: 13px; font-weight: 600; }
+.grw-customize .wb-seo-eligibility p { margin-top: 10px; }
+.grw-customize .wb-seo-eligibility__links { display: flex; flex-wrap: wrap; gap: 12px; }
+.grw-customize .wb-seo-eligibility a { color: var(--grw-brand); }
+
+/* Compact native settings: status alongside its switch, description and plan action. */
+.grw-customize .wb-seo-control { padding:14px; border:1px solid var(--grw-border); border-radius:var(--grw-radius-sm); background:var(--grw-surface); }
+.grw-customize .wb-seo-setting .grw-field { margin:0; }
+.grw-customize .wb-seo-setting .grw-switch { justify-content:flex-start; gap:10px; }
+.grw-customize .wb-seo-setting .grw-switch__copy { flex:0 1 auto; order:1; }
+.grw-customize .wb-seo-setting .grw-switch__track { margin:0; }
+.grw-customize .wb-seo-panel .wb-seo-lead { margin:12px 0 0; padding:0; border:0; background:none; color:var(--grw-text-muted); font-size:13px; line-height:1.6; }
+.grw-customize .wb-seo-panel .wb-seo-availability { margin:14px 0 0; color:var(--grw-text-muted); font-size:13px; }
+.grw-customize .wb-seo-panel .wb-seo-upgrade-actions { margin:14px 0 0; display:flex; }
+.grw-customize .wb-seo-upgrade-actions .grw-customize-trial-card__cta { width:100%; justify-content:center; min-height:40px; border-radius:8px; }

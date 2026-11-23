@@ -16,7 +16,7 @@
     };
 
     function resolveTheme(theme) {
-        return theme === 'dark' ? 'dark' : 'light';
+        return theme === 'dark' || theme === 'transparent' ? theme : 'light';
     }
 
     function layoutPickerDemoConfig(previewMeta, layout, theme) {
@@ -109,6 +109,9 @@
         });
 
         [
+            'custom_css',
+            'language',
+            'language_mode', 'ai_summary_language', 'ai_summary_language_override',
             'theme',
             'badge_element_order',
             'sticker_element_order',
@@ -351,6 +354,8 @@
         if (options.maxReviews != null) {
             opts.maxReviews = options.maxReviews;
         }
+        opts.language = merged.language || 'auto';
+        opts.language_mode = opts.language === 'auto' ? 'auto' : 'fixed';
         return opts;
     }
 

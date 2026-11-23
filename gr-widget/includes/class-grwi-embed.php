@@ -16,6 +16,25 @@ final class GRWI_Embed
      */
     private static bool $hosted_script_in_document = false;
 
+    /** Frontend/page locale, never the logged-in administrator's preferred language. */
+    public static function frontend_locale(): string
+    {
+        $locale = function_exists('get_locale') ? (string) get_locale() : 'en_US';
+        if (function_exists('is_admin') && is_admin() && function_exists('get_option')) {
+            $locale = (string) get_option('WPLANG', 'en_US') ?: 'en_US';
+        }
+        if (function_exists('pll_current_language')) {
+            $locale = (string) pll_current_language('locale') ?: $locale;
+        } elseif (function_exists('apply_filters')) {
+            $locale = (string) apply_filters('wpml_current_language', null) ?: $locale;
+        }
+        if (function_exists('apply_filters')) {
+            $locale = (string) apply_filters('grwi_widget_frontend_locale', $locale);
+        }
+
+        return preg_match('/^[a-zA-Z]{2,3}(?:[_-][a-zA-Z0-9]{2,8})*$/', $locale) ? $locale : 'en_US';
+    }
+
     public static function register(): void
     {
         if (self::$hooks_registered) {
@@ -57,6 +76,16 @@ final class GRWI_Embed
         if (! is_admin() && GRWI_API_Client::service_allowed()
             && strpos($content, 'grwidget-embed') !== false
             && strpos($content, 'data-grwidget-key') !== false) {
+            // Custom HTML and widget-area embeds inherit the same page locale.
+            if (class_exists('WP_HTML_Tag_Processor')) {
+                $tags = new WP_HTML_Tag_Processor($content);
+                while ($tags->next_tag()) {
+                    if ($tags->get_attribute('data-grwidget-key') !== null || $tags->get_attribute('data-grwidget') !== null) {
+                        $tags->set_attribute('data-grwidget-locale', self::frontend_locale());
+                    }
+                }
+                $content = $tags->get_updated_html();
+            }
             self::mark_needed();
         }
 

@@ -69,6 +69,7 @@ class GRWI_Admin
         add_action('wp_ajax_grwi_connect_claim', [self::class, 'ajax_connect_claim']);
         add_action('wp_ajax_grwi_connect_status', [self::class, 'ajax_connect_status']);
         add_action('wp_ajax_grwi_refresh_widgets', [self::class, 'ajax_refresh_widgets']);
+        add_action('wp_ajax_grwi_dashboard_widget_preview', [self::class, 'ajax_dashboard_widget_preview']);
         add_action('wp_ajax_grwi_review_prompt', [self::class, 'ajax_review_prompt']);
         add_action('wp_ajax_grwi_install_check', [self::class, 'ajax_install_check']);
         add_action('wp_ajax_grwi_install_guide', [self::class, 'ajax_install_guide']);
@@ -142,19 +143,8 @@ class GRWI_Admin
         add_filter('wp_resource_hints', [self::class, 'resource_hints'], 10, 2);
         $caps = $client->capabilities();
         $admin_deps = ['jquery'];
-        $preview_script = esc_url((string) ($caps['preview_script_url'] ?? ''));
-        if ($preview_script === '') {
-            $preview_script = esc_url('https://grwidget.com/js/grw-preview.js');
-        }
-        wp_enqueue_script('grwi-preview', $preview_script, [], GRWI_VERSION, true);
-        wp_add_inline_script(
-            'grwi-preview',
-            sprintf(
-                '(function(){var l=document.createElement("link");l.rel="preload";l.as="script";l.href=%s;document.head.appendChild(l);}());',
-                wp_json_encode($preview_script)
-            ),
-            'before'
-        );
+        $preview_script = GRWI_PLUGIN_URL . 'assets/grw-preview.js';
+        wp_enqueue_script('grwi-preview', $preview_script, [], self::asset_version('assets/grw-preview.js'), true);
         $admin_deps[] = 'grwi-preview';
         wp_enqueue_script('grwi-preview-opts', GRWI_PLUGIN_URL . 'assets/admin-preview-opts.js', ['jquery'], GRWI_VERSION, true);
         $admin_deps[] = 'grwi-preview-opts';
@@ -173,7 +163,7 @@ class GRWI_Admin
             'layoutPreviewDemo' => $caps['layout_preview_demo'] ?? null,
             'layoutPreviewTheme' => $caps['layout_preview_theme'] ?? 'light',
             'layoutPickerPreviewUrl' => $caps['layout_picker_preview_url'] ?? 'https://grwidget.com/embed/layout-picker',
-            'previewScriptUrl' => $caps['preview_script_url'] ?? '',
+            'previewScriptUrl' => $preview_script,
             'embedScriptUrl' => $caps['embed_script_url'] ?? '',
             'apiBaseUrl' => $caps['api_base_url'] ?? '',
             'upgradeUrl' => $caps['upgrade_url'] ?? 'https://grwidget.com/blog/wordpress-plugin-upgrade?source=wordpress',
@@ -608,6 +598,36 @@ class GRWI_Admin
      * Re-fetch the widget list for a linked account (web-builder widgets included).
      * Invoked once from admin.js when the GR Widget screen loads.
      */
+    /** Combine authenticated review data with the latest saved design, including an unpublished draft. */
+    public static function dashboard_preview_payload(array $preview, array $editor): array
+    {
+        $layout = (string) ($editor['builder']['layout'] ?? $editor['widget']['layout'] ?? $preview['layout'] ?? 'badge_card');
+        $preview['layout'] = $layout;
+        $preview['layout_label'] = $editor['builder']['layout_label'] ?? $editor['widget']['layout_label'] ?? '';
+        $preview['config'] = is_array($editor['config'] ?? null) ? $editor['config'] : ($preview['config'] ?? []);
+        $preview['theme'] = $preview['config']['theme'] ?? $preview['theme'] ?? 'light';
+        $preview['has_unpublished_draft'] = !empty($editor['has_unpublished_draft']) || !empty($editor['draft_differs_from_live']);
+        $preview['preview_state'] = $preview['has_unpublished_draft'] || (isset($editor['widget']['is_active']) && !$editor['widget']['is_active']) ? 'draft' : 'live';
+        $meta = $editor['builder']['preview'] ?? [];
+        $preview['preview_meta'] = array_intersect_key($meta, array_flip(['layout_full_defaults','layout_full_defaults_by_layout','layout_master_defaults']));
+        if (isset($preview['preview_meta']['layout_full_defaults_by_layout'])) $preview['preview_meta']['layout_full_defaults_by_layout'] = [$layout => $meta['layout_full_defaults_by_layout'][$layout] ?? []];
+        return $preview;
+    }
+
+    public static function ajax_dashboard_widget_preview(): void
+    {
+        check_ajax_referer('grwi_admin', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error(['message'=>__('Forbidden.', 'gr-widget')], 403);
+        $key = sanitize_text_field(wp_unslash($_POST['embed_key'] ?? ''));
+        if ($key === '') wp_send_json_error(['message'=>__('Missing widget key.', 'gr-widget')], 422);
+        $client = new GRWI_API_Client();
+        $preview = $client->get_widget_preview_data($key, true);
+        if (!is_wp_error($preview) && !empty($preview['saved_design_preview'])) wp_send_json_success($preview);
+        $editor = $client->get_widget_editor($key);
+        if (is_wp_error($preview) || is_wp_error($editor)) wp_send_json_error(['message'=>__('Could not load the saved widget preview.', 'gr-widget')], 502);
+        wp_send_json_success(self::dashboard_preview_payload($preview, $editor));
+    }
+
     public static function ajax_refresh_widgets(): void
     {
         check_ajax_referer('grwi_admin', 'nonce');

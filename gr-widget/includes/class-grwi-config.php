@@ -27,7 +27,7 @@ final class GRWI_Config
             return self::invalid();
         }
         if (self::contains_code($input)) {
-            return new WP_Error('grwi_custom_code_disabled', __('Custom CSS, JavaScript and PHP cannot be saved through the WordPress plugin.', 'gr-widget'), ['status' => 422]);
+            return new WP_Error('grwi_custom_code_disabled', __('JavaScript, PHP and HTML cannot be saved through the WordPress plugin.', 'gr-widget'), ['status' => 422]);
         }
         $schema = json_decode((string) file_get_contents(__DIR__ . '/config-schema.json'), true);
         if (! is_array($schema)) {
@@ -45,8 +45,6 @@ final class GRWI_Config
             }
             $clean[$key] = $sanitized;
         }
-        // Clear code saved by previous releases; never preserve or accept new code.
-        $clean['custom_css'] = '';
 
         return $clean;
     }
@@ -90,6 +88,10 @@ final class GRWI_Config
             return in_array($value, [true, 1, '1', 'true'], true);
         }
         $text = sanitize_text_field((string) $value);
+        if ($type === 'css') {
+            if (strlen((string) $value) > 16384 || preg_match('/<\/?(?:script|style|iframe|object|embed)\b|javascript\s*:|@import\b|expression\s*\(/i', (string) $value)) return self::invalid();
+            return trim((string) $value);
+        }
         if ($type === 'text') {
             if (strlen((string) $value) > 10000) {
                 return self::invalid();
@@ -101,10 +103,11 @@ final class GRWI_Config
         if ($text === '') {
             return '';
         }
-        if ($type === 'number') {
-            $with_px = ! empty($spec['allow_px']) && substr($text, -2) === 'px';
+        if ($type === 'number' || $type === 'int') {
+            $with_px = $type !== 'int' && ! empty($spec['allow_px']) && substr($text, -2) === 'px';
             $number = $with_px ? substr($text, 0, -2) : $text;
-            if (! preg_match('/^-?\d+(?:\.\d+)?$/D', $number) || (float) $number < $spec['min'] || (float) $number > $spec['max']) {
+            $pattern = $type === 'int' ? '/^-?\d+$/D' : '/^-?\d+(?:\.\d+)?$/D';
+            if (! preg_match($pattern, $number) || (float) $number < $spec['min'] || (float) $number > $spec['max']) {
                 return self::invalid();
             }
 
@@ -146,7 +149,7 @@ final class GRWI_Config
             return true;
         }
         foreach ($input as $key => $value) {
-            if (is_string($key) && preg_match('/^(?:custom_?(?:css|js|javascript|php|html)|javascript|php_code|script|scripts)$/iD', $key)
+            if (is_string($key) && preg_match('/^(?:custom_?(?:js|javascript|php|html)|javascript|php_code|script|scripts)$/iD', $key)
                 && $value !== '' && $value !== null && $value !== false && $value !== []) {
                 return true;
             }
@@ -233,12 +236,12 @@ final class GRWI_Config
         return $clean;
     }
 
-    /** Remove custom-code fields from remotely supplied builder metadata/configs. */
+    /** Remove executable-code controls; custom CSS remains a validated Site+ widget setting. */
     public static function without_code_controls(array $data): array
     {
         $clean = [];
         foreach ($data as $key => $value) {
-            if ($key === 'custom_css' || is_array($value) && ($value['key'] ?? '') === 'custom_css') {
+            if (in_array($key, ['custom_js','custom_javascript','custom_php','custom_html'], true) || is_array($value) && in_array($value['key'] ?? '', ['custom_js','custom_javascript','custom_php','custom_html'], true)) {
                 continue;
             }
             $clean[$key] = is_array($value) ? self::without_code_controls($value) : $value;

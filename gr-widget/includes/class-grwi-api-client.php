@@ -597,7 +597,15 @@ class GRWI_API_Client
     /**
      * @return array<string, mixed>|WP_Error
      */
-    public function get_widget_preview_data(string $embed_key)
+    public function generate_widget_ai_summary(string $embed_key, array $settings)
+    {
+        if (! $this->is_linked()) return new WP_Error('grwi_ai_requires_account', __('Link an eligible Business or Agency account to generate an AI summary.', 'gr-widget'));
+        $settings = array_intersect_key($settings, array_flip(['language','language_mode','ai_summary_language_override','ai_summary_length']));
+        $settings['force_regenerate'] = true;
+        return $this->integration_request('POST', '/integrations/wordpress/widgets/' . rawurlencode($embed_key) . '/ai-summary', $settings, $this->linked_site_query());
+    }
+
+    public function get_widget_preview_data(string $embed_key, bool $dashboard = false)
     {
         $embed_key = sanitize_text_field($embed_key);
 
@@ -606,14 +614,14 @@ class GRWI_API_Client
                 'GET',
                 '/integrations/wordpress/widgets/' . rawurlencode($embed_key) . '/preview-data',
                 null,
-                $this->linked_site_query()
+                array_merge($this->linked_site_query(), $dashboard ? ['dashboard_preview' => '1'] : [])
             );
         }
 
         return $this->reject_linked_anonymous(
             $this->request(
                 'GET',
-                '/wordpress/anonymous/widgets/' . rawurlencode($embed_key) . '/preview-data',
+                '/wordpress/anonymous/widgets/' . rawurlencode($embed_key) . '/preview-data' . ($dashboard ? '?dashboard_preview=1' : ''),
                 null,
                 $this->site_headers()
             )
@@ -782,7 +790,12 @@ class GRWI_API_Client
 
         $defaults = self::default_capabilities();
 
-        return array_replace_recursive($defaults, $caps);
+        $effective = array_replace_recursive($defaults, $caps);
+        // A stale linked/legacy capability cache cannot grant anonymous plan limits.
+        foreach (['max_widgets', 'max_reviews_display', 'max_reviews_sync'] as $key) {
+            $effective['limits'][$key] = $defaults['limits'][$key];
+        }
+        return $effective;
     }
 
     public function is_registered(): bool
@@ -1039,7 +1052,7 @@ class GRWI_API_Client
         $url = self::canonical_api_base($this->api_base) . $path;
         $args = [
             'method' => $method,
-            'timeout' => 20,
+            'timeout' => substr($path, -11) === '/ai-summary' ? 90 : 20,
             'redirection' => 0,
             'headers' => array_merge([
                 'Accept' => 'application/json',

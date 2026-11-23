@@ -296,7 +296,7 @@
         });
         $('.grw-customize__rail-btn[data-grwi-section="options"]').remove();
         $('[data-grwi-panel="options"]').remove();
-        return ed;
+        return window.GrwiBuilder && GrwiBuilder.ensureLanguageSeoTabs ? GrwiBuilder.ensureLanguageSeoTabs(ed) : ed;
     }
 
     function readInitialSection() {
@@ -345,6 +345,7 @@
     }
 
     function ensureLayoutPickerOnEditor(ed) {
+        if (window.GrwiBuilder && GrwiBuilder.ensureLanguageSeoTabs) ed = GrwiBuilder.ensureLanguageSeoTabs(ed);
         if (!ed || typeof ed !== 'object') {
             return ed;
         }
@@ -528,7 +529,7 @@
             return $el.val();
         }
         var raw = $el.val();
-        if (key === 'review_order' || key === 'hidden_review_ids' || key === 'badge_element_order' || key === 'sticker_element_order') {
+        if (key === 'review_order' || key === 'hidden_review_ids' || key === 'badge_element_order' || key === 'sticker_element_order' || key === 'ai_summary_themes') {
             try {
                 var decoded = JSON.parse(raw || '[]');
                 return Array.isArray(decoded) ? decoded : [];
@@ -597,12 +598,12 @@
             next[key] = parseFieldValue($(this), key);
         });
 
+        var layoutKey = String((editor && editor.builder && editor.builder.layout) || next.layout || '');
         var widthMode = String(next.widget_width_mode || '').toLowerCase();
-        if (widthMode === 'fit') {
+        if (widthMode === 'fit' && layoutKey.indexOf('feed_') !== 0) {
             widthMode = 'auto';
             next.widget_width_mode = 'auto';
         }
-        var layoutKey = String((editor && editor.builder && editor.builder.layout) || next.layout || '');
         if (layoutKey === 'sticker_light' || layoutKey === 'sticker_bold') {
             next.widget_width_mode = 'auto';
             next.widget_width_custom = '';
@@ -618,9 +619,27 @@
             next.widget_width = 'auto';
         }
 
-        delete next.custom_css;
         return next;
     }
+
+    $(document).on('click', '[data-grwi-generate-ai-summary]', function () {
+        var $button=$(this);if($button.prop('disabled'))return;
+        var settings=collectConfigFromForm();
+        var selection=JSON.stringify([settings.language,settings.ai_summary_language_override,settings.ai_summary_length]);
+        $button.prop('disabled',true).text('Generating…');
+        $.post(cfg.ajaxUrl,{action:'grwi_generate_ai_summary',nonce:cfg.nonce,embed_key:embedKey,config:JSON.stringify(settings)})
+            .done(function(response){
+                if(!response || !response.success){showNotice(response && response.data && response.data.message || 'Could not generate the summary.','error');return;}
+                var current=collectConfigFromForm();
+                if(selection!==JSON.stringify([current.language,current.ai_summary_language_override,current.ai_summary_length])){showNotice('Summary settings changed. Generate again to use the new selection.','info');return;}
+                var result=response.data || {};
+                editor.config=$.extend({},current,{ai_summary_text:result.text || '',ai_summary_list:result.list || '',ai_summary_themes:result.themes || [],ai_summary_language:result.language || 'en',ai_summary_regenerated_at:result.generated_at || '',ai_summary_review_count:result.review_count || 0});
+                editorConfig=$.extend({},editor.config);dirty=true;
+                GrwiBuilder.renderAllPanels(editor);mountPreview();updateSaveStatus();
+                showNotice('Summary generated. Save or publish to keep it.','success');
+            }).fail(function(xhr){showNotice(xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message || 'Could not generate the summary.','error');})
+            .always(function(){$('[data-grwi-generate-ai-summary]').prop('disabled',aiSummaryLocked()).text('Generate summary');});
+    });
 
     function syncRangeOutputs() {
         $('input[type="range"][data-config-key]').each(function () {
@@ -700,7 +719,7 @@
     }
 
     function honorCustomizePlacementInPreview() {
-        return customizeActiveSectionId() === 'settings';
+        return customizeActiveSectionId() === 'layout';
     }
 
     function previewPlacementConfig(config) {
@@ -710,8 +729,6 @@
         }
         return $.extend({}, config, {
             widget_display_mode: 'inline',
-            badge_alignment: 'center',
-            widget_align: 'center',
         });
     }
 
@@ -745,6 +762,7 @@
         }
 
         var widthMode = String(config.widget_width_mode || '').trim().toLowerCase();
+        if (widthMode === 'fit') widthMode='auto';
         if (widthMode === 'fit') widthMode = 'auto';
         if (widthMode !== 'full' && widthMode !== 'custom' && widthMode !== 'auto') {
             widthMode = (layout.indexOf('feed_') === 0) ? 'full' : 'auto';
@@ -838,8 +856,6 @@
         applyPluginReviewContentPreviewOpts(previewOpts, formConfig, layout);
         if (!honorCustomizePlacementInPreview()) {
             previewOpts.widget_display_mode = 'inline';
-            previewOpts.badge_alignment = 'center';
-            previewOpts.widget_align = 'center';
         }
         return previewOpts;
     }
@@ -1337,7 +1353,7 @@
             return;
         }
 
-        var layout = previewPayload.layout || $root.data('layout') || 'badge_card';
+        var layout = currentLayoutKey() || previewPayload.layout || 'badge_card';
         var place = previewPayload.place || {};
         var reviews = previewPayload.reviews || [];
         var formConfig = collectConfigFromForm();
@@ -1451,11 +1467,12 @@
             if (!response || !response.success) {
                 return;
             }
-            previewPayload = response.data || {};
-            if (previewPayload.config) {
-                savedWidgetConfig = $.extend({}, previewPayload.config);
-                editorConfig = $.extend({}, editorConfig, savedWidgetConfig);
-            }
+            // Review responses may describe the published widget. The editor owns the
+            // current saved draft and any changes made while this request was in flight.
+            previewPayload = $.extend({}, response.data || {}, {
+                layout: currentLayoutKey() || (response.data || {}).layout || 'badge_card',
+                config: $.extend({}, editorConfig),
+            });
             var $sub = $('#grwi-customize-preview-sub');
             if ($sub.length) {
                 if (previewPayload.has_cached_reviews) {
@@ -1728,7 +1745,28 @@
         });
     }
 
+    function updateLanguageExample() {
+        var node = document.querySelector('[data-grwi-language-example]');
+        if (!node || !window.GrwI18n) return;
+        var language = $('[data-config-key="language"]').val() || (editor && editor.config && editor.config.language) || 'auto';
+        var config = { language: language, language_mode: language === 'auto' ? 'auto' : 'fixed' };
+        GrwI18n.configure(node, config);
+        GrwI18n.html(node, GrwI18n.msg('reviews.based_on', { count: 127 }) + ' · ' + GrwI18n.msg('reviews.read_more'), config);
+    }
+
+    function syncSeoState() {
+        var node = document.querySelector('.wb-seo-panel');
+        if (!node) return;
+        var field = document.querySelector('[data-config-key="enable_json_ld"]');
+        var enabled = !!(field && field.checked);
+        node.classList.toggle('is-off', !enabled);
+        var state = node.querySelector('[data-grwi-seo-state]');
+        if (state) state.textContent = enabled ? 'Active' : 'Disabled';
+    }
+
     function bindPanelInteractions() {
+        syncSeoState();
+        updateLanguageExample();
         syncRangeOutputs();
         syncAllOuterSpacingLinkLabels();
         if (window.GrwiBuilder && typeof GrwiBuilder.syncAllColorFieldSwatches === 'function') {
@@ -1966,6 +2004,15 @@
         syncWidthCustomHidden($wrap);
     });
 
+    $(document).on('click','[data-grwi-reset-appearance]',function(){
+        if(!window.GrwiBuilder || !GrwiBuilder.resetAppearanceConfig)return;
+        captureCustomizeScrollPositions();
+        editorConfig=GrwiBuilder.resetAppearanceConfig(editor,collectConfigFromForm());
+        editor.config=editorConfig;
+        GrwiBuilder.renderAllPanels(editor);bindPanelInteractions();
+        lastChangedConfigKey='';lastPreviewConfigJson='';schedulePreview();restoreCustomizeScrollPositions();
+    });
+
     $(document).on('input change', '[data-config-key]', function () {
         if (this.getAttribute('data-grwi-locked-switch') || this.getAttribute('data-grwi-locked-field') || this.disabled) {
             if (this.type === 'checkbox') {
@@ -1983,6 +2030,8 @@
             this.setAttribute('aria-checked', this.checked ? 'true' : 'false');
         }
         var key = this.getAttribute('data-config-key');
+        if (key === 'language') updateLanguageExample();
+        if (key === 'enable_json_ld') syncSeoState();
         if (key) {
             lastChangedConfigKey = key;
             refreshConditionalFormFields(key);
@@ -2511,7 +2560,7 @@
             $('#grwi-unlock-modal-secondary').text(config.secondaryLabel || 'Cancel');
             var $planSafe = $('#grwi-unlock-modal-plan-safe');
             if ($planSafe.length) {
-                if (config.planSafeLabel) {
+                if (config.planSafeLabel && typeof config.onPlanSafe === 'function') {
                     $planSafe.text(config.planSafeLabel).prop('hidden', false);
                 } else {
                     $planSafe.text('').prop('hidden', true);
@@ -4170,8 +4219,9 @@
         }
 
         function mountLayoutGalleryPreviews() {
+            bindLayoutGalleryRefit();
             var $mocks = $('[data-grwi-layout-picker] .grw-layout-card__mock[data-layout]').filter(function () {
-                return this.getAttribute('data-grw-preview-mounted') !== '1';
+                return !this.closest('details:not([open])') && this.getAttribute('data-grw-preview-mounted') !== '1';
             });
             if (!$mocks.length) {
                 return;
@@ -4217,6 +4267,12 @@
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(refitMountedLayoutGalleryPreviews, 120);
             }
+            document.addEventListener('toggle', function (event) {
+                if (event.target && event.target.open && event.target.closest('[data-grwi-layout-picker]')) {
+                    mountLayoutGalleryPreviews();
+                    scheduleRefit();
+                }
+            }, true);
             window.addEventListener('load', refitMountedLayoutGalleryPreviews);
             window.addEventListener('resize', scheduleRefit, { passive: true });
             if (typeof window.ResizeObserver === 'function') {
@@ -4246,6 +4302,12 @@
             var title = options.title
                 || ('Unlock ' + featureLabel + ' with ' + planLabel);
 
+            var isSchema = featureKey === 'json_ld';
+            if (isSchema) {
+                title = (window.GrwiSeoContent || {}).upgradeTitle || 'Turn your reviews into stars in Google search';
+                options.body = (window.GrwiSeoContent || {}).upgradeBody || 'Give Google the structured review data it needs to show your rating, stars and review count on eligible pages. Make your business stand out in search, build trust before the click, and attract more customers.';
+            }
+
             if (!isLinked) {
                 var unlinkedPrompt = {};
                 if (editor && editor.feature_prompts) {
@@ -4264,12 +4326,12 @@
                     : (i18n.sitePlanName || 'Site');
                 openUnlockModal({
                     mode: 'site',
-                    title: unlinkedPrompt.title || options.title || ('Unlock ' + featureLabel + ' with ' + unlinkedPlanLabel),
-                    body: unlinkedPrompt.body || options.body || ('This is a ' + unlinkedPlanLabel + ' feature. Linking a free account does not unlock it.'),
+                    title: isSchema ? title : (unlinkedPrompt.title || options.title || ('Unlock ' + featureLabel + ' with ' + unlinkedPlanLabel)),
+                    body: isSchema ? options.body : (unlinkedPrompt.body || options.body || ('This is a ' + unlinkedPlanLabel + ' feature. Linking a free account does not unlock it.')),
                     supporting: unlinkedPrompt.supporting
                         || options.supporting
                         || (i18n.trialUnknownSupporting || 'Trial eligibility will be confirmed before payment.'),
-                    primaryLabel: unlinkedPrompt.primary_label || options.upgradeCta || (plan === 'business' ? 'Get Business' : 'View Site plan'),
+                    primaryLabel: isSchema ? (options.upgradeCta || 'Get Business') : (unlinkedPrompt.primary_label || options.upgradeCta || (plan === 'business' ? 'Get Business' : 'View Site plan')),
                     secondaryLabel: unlinkedPrompt.secondary_label || 'Compare plans',
                     linkOnlyLabel: unlinkedPrompt.link_only_label || 'Link free account only',
                     linkOnlyNote: unlinkedPrompt.link_only_note || ('Linking a free account does not unlock this ' + unlinkedPlanLabel + ' feature.'),
@@ -4279,8 +4341,8 @@
                         openCheckoutPopup(url || '/', options.layoutKey || '', options.featureSlug || unlinkedPrompt.feature || '');
                     },
                     onSecondary: function () {
-                        if (unlinkedPrompt.compare_url || unlinkedPrompt.secondary_url) {
-                            window.open(unlinkedPrompt.compare_url || unlinkedPrompt.secondary_url, '_blank', 'noopener,noreferrer');
+                        if (isSchema || unlinkedPrompt.compare_url || unlinkedPrompt.secondary_url) {
+                            window.open(unlinkedPrompt.compare_url || unlinkedPrompt.secondary_url || 'https://grwidget.com/pricing?source=wordpress', '_blank', 'noopener,noreferrer');
                         }
                         closeUnlockModal();
                     },
@@ -4308,9 +4370,10 @@
                             ? (i18n.businessTrialIneligibleSupporting || 'Charged at checkout. Cancel anytime.')
                             : (i18n.trialIneligibleSupporting || 'Charged at checkout. Cancel anytime.'))),
                 primaryLabel: trialEligible
-                    ? (i18n.siteLayoutCta || 'Start 7-day Site trial')
+                    ? (isSchema ? 'Start 7-day Business trial' : (i18n.siteLayoutCta || 'Start 7-day Site trial'))
                     : (options.upgradeCta || i18n.customizeUpgradeCta || 'Upgrade'),
-                secondaryLabel: i18n.featureTrialSecondary || 'Not now',
+                secondaryLabel: isSchema ? 'Compare plans' : (i18n.featureTrialSecondary || 'Not now'),
+                onSecondary: isSchema ? function () { window.open('https://grwidget.com/pricing?source=wordpress', '_blank', 'noopener,noreferrer'); closeUnlockModal(); } : undefined,
                 footer: trialEligible
                     ? (i18n.siteLayoutFooter || 'Cancel anytime during the trial')
                     : '',

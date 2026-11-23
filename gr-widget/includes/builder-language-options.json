@@ -1,0 +1,90 @@
+[
+  {
+    "value": "auto",
+    "label": "Automatic — Website language"
+  },
+  {
+    "value": "en",
+    "label": "English"
+  },
+  {
+    "value": "nl",
+    "label": "Nederlands"
+  },
+  {
+    "value": "fr",
+    "label": "Français"
+  },
+  {
+    "value": "de",
+    "label": "Deutsch"
+  },
+  {
+    "value": "es",
+    "label": "Español"
+  },
+  {
+    "value": "it",
+    "label": "Italiano"
+  },
+  {
+    "value": "pt",
+    "label": "Português"
+  },
+  {
+    "value": "pl",
+    "label": "Polski"
+  },
+  {
+    "value": "uk",
+    "label": "Українська"
+  },
+  {
+    "value": "ar",
+    "label": "العربية"
+  },
+  {
+    "value": "zh",
+    "label": "中文（简体）"
+  },
+  {
+    "value": "ja",
+    "label": "日本語"
+  },
+  {
+    "value": "tr",
+    "label": "Türkçe"
+  },
+  {
+    "value": "sv",
+    "label": "Svenska"
+  },
+  {
+    "value": "da",
+    "label": "Dansk"
+  },
+  {
+    "value": "nb",
+    "label": "Norsk (bokmål)"
+  },
+  {
+    "value": "fi",
+    "label": "Suomi"
+  },
+  {
+    "value": "cs",
+    "label": "Čeština"
+  },
+  {
+    "value": "ro",
+    "label": "Română"
+  },
+  {
+    "value": "hu",
+    "label": "Magyar"
+  },
+  {
+    "value": "el",
+    "label": "Ελληνικά"
+  }
+]

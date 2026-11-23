@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
  */
 class GRWI_Customize
 {
+    private static array $editor_payloads = [];
     public static function register(): void
     {
         if (! is_admin()) {
@@ -15,9 +16,18 @@ class GRWI_Customize
 
         add_action('admin_menu', [self::class, 'menu']);
         add_action('admin_enqueue_scripts', [self::class, 'assets']);
+        add_filter('script_loader_tag', [self::class, 'preview_script_tag'], 10, 2);
         add_action('wp_ajax_grwi_get_widget_preview', [self::class, 'ajax_preview_data']);
         add_action('wp_ajax_grwi_save_widget', [self::class, 'ajax_save_widget']);
+        add_action('wp_ajax_grwi_generate_ai_summary', [self::class, 'ajax_generate_ai_summary']);
         add_action('wp_ajax_grwi_report_bug', [self::class, 'ajax_report_bug']);
+    }
+
+    /** Keep admin translations local to the versioned preview bundled with this plugin. */
+    public static function preview_script_tag(string $tag, string $handle): string
+    {
+        if ($handle !== 'grwi-preview') return $tag;
+        return str_replace('<script ', '<script data-grw-i18n-base="' . esc_url(GRWI_PLUGIN_URL . 'assets/i18n/') . '" ', $tag);
     }
 
     /**
@@ -41,6 +51,7 @@ class GRWI_Customize
     public static function resolve_active_section(string $requested_tab, array $section_ids): string
     {
         $requested_tab = sanitize_key($requested_tab);
+        if (in_array($requested_tab, ['settings','options'], true) && ! in_array('settings', $section_ids, true) && in_array('layout', $section_ids, true)) $requested_tab = 'layout';
         if ($requested_tab === 'options'
             && ! in_array('options', $section_ids, true)
             && in_array('settings', $section_ids, true)
@@ -98,10 +109,21 @@ class GRWI_Customize
             return;
         }
         add_filter('wp_resource_hints', [GRWI_Admin::class, 'resource_hints'], 10, 2);
+        // Fetch once per request; the same fresh editor payload renders the page below.
+        // Asset URLs change with web releases, even when the plugin remains on 1.2.7.
+        $requested_key = sanitize_text_field(wp_unslash($_GET['widget'] ?? ''));
+        $fresh_editor = [];
+        if ($requested_key !== '') {
+            self::$editor_payloads[$requested_key] = $client->get_widget_editor($requested_key);
+            if (is_array(self::$editor_payloads[$requested_key])) $fresh_editor = self::$editor_payloads[$requested_key];
+        }
         $caps = $client->capabilities();
-        $preview_script = esc_url((string) ($caps['preview_script_url'] ?? 'https://grwidget.com/js/grw-preview.js'));
-        wp_enqueue_script('grwi-preview', $preview_script, [], GRWI_VERSION, true);
-        $mock_css = esc_url((string) ($caps['mock_css_url'] ?? ''));
+        $preview_script = GRWI_PLUGIN_URL . 'assets/grw-preview.js';
+        wp_enqueue_script('grwi-preview', $preview_script, [], self::asset_version('assets/grw-preview.js'), true);
+        wp_enqueue_script('grwi-reset-contract', GRWI_PLUGIN_URL . 'assets/builder-reset.js', [], self::asset_version('assets/builder-reset.js'), true);
+        wp_enqueue_script('grwi-seo-content', GRWI_PLUGIN_URL . 'assets/builder-seo-content.js', [], self::asset_version('assets/builder-seo-content.js'), true);
+        wp_enqueue_style('grwi-seo', GRWI_PLUGIN_URL . 'assets/builder-seo.css', [], self::asset_version('assets/builder-seo.css'));
+        $mock_css = esc_url((string) ($fresh_editor['mock_css_url'] ?? $caps['mock_css_url'] ?? ''));
         if ($mock_css !== '') {
             wp_enqueue_style('grwi-widget-mock', $mock_css, [], GRWI_VERSION);
         }
@@ -109,7 +131,7 @@ class GRWI_Customize
         wp_enqueue_script('grwi-preview-opts', GRWI_PLUGIN_URL . 'assets/admin-preview-opts.js', ['jquery'], GRWI_VERSION, true);
         $builder_ver = self::asset_version('assets/admin-customize-builder.js');
         $customize_ver = self::asset_version('assets/admin-customize.js');
-        wp_enqueue_script('grwi-customize-builder', GRWI_PLUGIN_URL . 'assets/admin-customize-builder.js', ['jquery', 'grwi-preview-opts'], $builder_ver, true);
+        wp_enqueue_script('grwi-customize-builder', GRWI_PLUGIN_URL . 'assets/admin-customize-builder.js', ['jquery', 'grwi-preview-opts', 'grwi-seo-content', 'grwi-reset-contract'], $builder_ver, true);
         wp_enqueue_script('grwi-customize', GRWI_PLUGIN_URL . 'assets/admin-customize.js', array_merge($deps, ['grwi-preview-opts']), $customize_ver, true);
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -153,7 +175,7 @@ class GRWI_Customize
             'embedKey' => $embed_key,
             'siteId' => $site_id,
             'dashboardUrl' => GRWI_Admin::admin_page_url(),
-            'previewScriptUrl' => $caps['preview_script_url'] ?? '',
+            'previewScriptUrl' => $fresh_editor['preview_script_url'] ?? $caps['preview_script_url'] ?? '',
             'pluginUrl' => GRWI_PLUGIN_URL,
             'pluginVersion' => GRWI_VERSION,
             'pluginAssetVersion' => self::asset_version('assets/google-search-stars-rich-result.svg'),
@@ -339,6 +361,7 @@ class GRWI_Customize
      */
     public static function apply_merged_settings_nav(array $builder): array
     {
+        $builder = self::language_seo_tabs($builder);
         if (! self::merged_settings_nav()) {
             return $builder;
         }
@@ -430,6 +453,49 @@ class GRWI_Customize
         return $builder;
     }
 
+    /** Keep dedicated tabs present even when an older API payload is cached. Entitlements stay server-controlled. */
+    public static function language_seo_tabs(array $builder): array
+    {
+        $sections = is_array($builder['sections'] ?? null) ? $builder['sections'] : [];
+        $fields = is_array($builder['fields'] ?? null) ? $builder['fields'] : [];
+        $language = null;
+        $seo_locked = true;
+        $has_seo_field = false;
+        foreach ($fields as &$field) {
+            if (in_array($field['section'] ?? '', ['settings','options'], true) && ($field['key'] ?? '') !== 'enable_json_ld') {
+                $style_keys = ['widget_align','widget_width_mode','widget_width_custom','badge_alignment','pill_alignment','widget_outer_spacing'];
+                $in_style = in_array($field['key'] ?? '', $style_keys, true);
+                $field['section'] = $in_style ? 'style' : 'layout';
+                if ($in_style) $field['group'] = 'layout_spacing';
+            }
+            if (($field['key'] ?? '') === 'enable_json_ld') {
+                $field['section'] = 'seo';
+                $seo_locked = ! empty($field['locked']);
+                $has_seo_field = true;
+            }
+            if (($field['key'] ?? '') === 'language') $language = $field;
+        }
+        unset($field);
+        if ($language === null) {
+            $fields[] = ['key' => 'language', 'type' => 'select', 'section' => 'language', 'label' => 'Widget language', 'hint' => "Automatically displays your widget in your website's language. Choose a language to override this.", 'options' => json_decode((string) file_get_contents(__DIR__ . '/builder-language-options.json'), true)];
+        }
+        if (! $has_seo_field) $fields[] = ['key' => 'enable_json_ld', 'type' => 'checkbox', 'section' => 'seo', 'group' => 'json_ld', 'label' => 'Enable review & rating schema', 'locked' => true, 'upgrade_feature' => 'json_ld'];
+        $sections = array_values(array_filter($sections, static function ($section) { return ! in_array($section['id'] ?? '', ['language', 'seo', 'settings', 'options'], true); }));
+        $insert = count($sections);
+        foreach ($sections as $i => $section) if (($section['id'] ?? '') === 'install') { $insert = $i; break; }
+        array_splice($sections, $insert, 0, [
+            ['id' => 'language', 'title' => 'Language', 'subtitle' => 'Choose the language visitors see in your widget.'],
+            ['id' => 'seo', 'title' => 'SEO', 'subtitle' => 'Review and rating structured data', 'locked' => $seo_locked, 'upgrade_feature' => 'json_ld'],
+        ]);
+        $order = array_flip(['layout','reviews','style','customize','ai-summary','panel','language','seo','install']);
+        usort($sections, static function ($a, $b) use ($order) { return ($order[$a['id']] ?? 99) <=> ($order[$b['id']] ?? 99); });
+        foreach ($sections as &$section) if (($section['id'] ?? '') === 'ai-summary') $section['title'] = 'AI Summary';
+        unset($section);
+        $builder['sections'] = $sections;
+        $builder['fields'] = $fields;
+        return $builder;
+    }
+
     /**
      * Cache-bust local builder assets when their file contents change.
      */
@@ -487,7 +553,7 @@ class GRWI_Customize
 
         $client = new GRWI_API_Client();
         $client->ensure_registered(false);
-        $editor = $client->get_widget_editor($embed_key);
+        $editor = self::$editor_payloads[$embed_key] ?? $client->get_widget_editor($embed_key);
 
         if (is_wp_error($editor)) {
             $error_message = $client->is_reconnect_error($editor)
@@ -641,7 +707,7 @@ class GRWI_Customize
         }
 
         $client = new GRWI_API_Client();
-        $result = $client->get_widget_preview_data($embed_key);
+        $result = $client->get_widget_preview_data($embed_key, true);
 
         if (is_wp_error($result)) {
             wp_send_json_error([
@@ -652,6 +718,19 @@ class GRWI_Customize
             ], $client->is_reconnect_error($result) ? 401 : 500);
         }
 
+        wp_send_json_success($result);
+    }
+
+    public static function ajax_generate_ai_summary(): void
+    {
+        check_ajax_referer('grwi_customize', 'nonce');
+        if (! current_user_can('manage_options')) wp_send_json_error(['message'=>__('Forbidden.', 'gr-widget')], 403);
+        $key = sanitize_text_field(wp_unslash($_POST['embed_key'] ?? ''));
+        if ($key === '') wp_send_json_error(['message'=>__('Missing widget key.', 'gr-widget')], 422);
+        $settings = GRWI_Config::sanitize(wp_unslash($_POST['config'] ?? ''));
+        if (is_wp_error($settings)) wp_send_json_error(['message'=>$settings->get_error_message()], 422);
+        $result = (new GRWI_API_Client())->generate_widget_ai_summary($key, $settings);
+        if (is_wp_error($result)) wp_send_json_error(['message'=>$result->get_error_message()], 422);
         wp_send_json_success($result);
     }
 

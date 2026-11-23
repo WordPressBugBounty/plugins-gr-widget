@@ -21,6 +21,8 @@ $grwi_created = ! empty($grwi_created);
 $grwi_rail_svgs = [
     'layout' => 'M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z',
     'options' => 'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
+    'seo' => 'M21 21l-4.35-4.35M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z',
+    'language' => 'M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
     'style' => 'M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 6.697 12.9c.75.75 1.95.22 1.72-1.062a11.044 11.044 0 0 1 .085-3.977M9.53 16.122l-7.19 3.75a2.25 2.25 0 0 1-2.4-2.245l7.19-3.75m0 0a15.998 15.998 0 0 1 6.697-12.9 2.25 2.25 0 0 1 2.4 2.245 11.044 11.044 0 0 0-.085 3.977',
     'reviews' => 'M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.563.563 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z',
     'customize' => 'M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75',
@@ -183,6 +185,10 @@ $grwi_section_display_title = static function ($section_id, $title) {
                             <?php endif; ?>
                         </header>
                         <div class="grw-customize__section-body" data-grwi-section-body="<?php echo esc_attr($grwi_section_id); ?>"></div>
+                        <?php if ($grwi_section_id === 'language') : ?>
+                            <div data-grwi-language-example aria-live="polite" class="grw-input" style="margin:16px;min-height:3rem;height:auto;padding:12px;line-height:1.6"></div>
+                            <p class="grw-field__hint" style="margin:16px"><?php esc_html_e('Your reviews, reviewer names and custom text stay exactly as written. AI summaries appear only when available in the selected language.', 'gr-widget'); ?></p>
+                        <?php endif; ?>
                     </section>
                 <?php endforeach; ?>
             </div>
@@ -245,7 +251,7 @@ $grwi_section_display_title = static function ($section_id, $title) {
             <?php endif; ?>
             <div class="grw-live-preview__stage grw-customize__preview-stage">
                 <div class="grw-customize__preview-root wb-preview-root" data-grwi-preview-root data-wb-preview-root>
-                    <div id="grwi-customize-preview-mount" class="grw-live-preview__target" data-wb-builder-preview></div>
+                    <div id="grwi-customize-preview-mount" class="grw-live-preview__target" data-wb-builder-preview data-grwidget-locale="<?php echo esc_attr(GRWI_Embed::frontend_locale()); ?>"></div>
                 </div>
             </div>
         </aside>

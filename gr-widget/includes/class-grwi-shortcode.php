@@ -38,6 +38,6 @@ class GRWI_Shortcode
 
         GRWI_Embed::mark_needed();
 
-        return '<div class="grwidget-embed" data-grwidget-key="' . esc_attr($embed_key) . '"></div>';
+        return '<div class="grwidget-embed" data-grwidget-key="' . esc_attr($embed_key) . '" data-grwidget-locale="' . esc_attr(GRWI_Embed::frontend_locale()) . '"></div>';
     }
 }

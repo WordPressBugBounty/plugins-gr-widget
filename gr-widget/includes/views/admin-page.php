@@ -453,7 +453,7 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                                         data-preview-theme="<?php echo esc_attr($grwi_layout_preview_theme); ?>"
                                     >
                                         <span class="grw-layout-card__stage" data-grw-layout-stage>
-                                            <span class="grw-layout-card__target" data-grw-layout-target></span>
+                                            <span class="grw-layout-card__target" data-grw-layout-target data-grwidget-locale="<?php echo esc_attr(GRWI_Embed::frontend_locale()); ?>"></span>
                                         </span>
                                     </span>
                                 </div>
@@ -1303,7 +1303,7 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                     ],
                 ];
                 ?>
-                <section class="grw-layout-upgrade grw-layout-upgrade--sidebar" data-grwi-plan="site" aria-labelledby="grwi-sidebar-upgrade-heading">
+                <section class="grw-layout-upgrade grw-layout-upgrade--sidebar" data-grwi-plan="business" aria-labelledby="grwi-sidebar-upgrade-heading">
                     <header class="grw-layout-upgrade__intro">
                         <div class="grw-layout-upgrade__kicker">
                             <span class="grw-layout-upgrade__mark" aria-hidden="true">
@@ -1321,11 +1321,11 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                         </p>
                     </header>
                     <div class="grw-plan-switch" role="tablist" aria-label="<?php esc_attr_e('Compare Site and Business', 'gr-widget'); ?>">
-                        <button type="button" class="grw-plan-switch__btn is-active" role="tab" aria-selected="true" data-grwi-plan-switch="site"><?php esc_html_e('Site', 'gr-widget'); ?></button>
-                        <button type="button" class="grw-plan-switch__btn" role="tab" aria-selected="false" data-grwi-plan-switch="business"><?php esc_html_e('Business', 'gr-widget'); ?></button>
+                        <button type="button" class="grw-plan-switch__btn" role="tab" aria-selected="false" data-grwi-plan-switch="site"><?php esc_html_e('Site', 'gr-widget'); ?></button>
+                        <button type="button" class="grw-plan-switch__btn is-active" role="tab" aria-selected="true" data-grwi-plan-switch="business"><?php esc_html_e('Business', 'gr-widget'); ?></button>
                     </div>
                     <?php foreach ($grwi_sidebar_plans as $grwi_plan_key => $grwi_plan) : ?>
-                        <div class="grw-plan-panel" data-grwi-plan-panel="<?php echo esc_attr($grwi_plan_key); ?>"<?php echo $grwi_plan_key === 'site' ? '' : ' hidden'; ?>>
+                        <div class="grw-plan-panel" data-grwi-plan-panel="<?php echo esc_attr($grwi_plan_key); ?>"<?php echo $grwi_plan_key === 'business' ? '' : ' hidden'; ?>>
                             <header class="grw-layout-upgrade__head">
                                 <h3 class="grw-layout-upgrade__title">
                                     <?php echo esc_html($grwi_plan['title']); ?>
@@ -1445,12 +1445,13 @@ $grwi_widget_created = isset($_GET['grwi_widget']) ? sanitize_text_field(wp_unsl
                     </button>
                 </header>
                 <div class="grw-widget-preview-modal__body">
+                    <p class="grw-widget-preview-modal__saved-state" data-grwi-saved-preview-label hidden></p>
                     <div class="grw-widget-preview-modal__loading" aria-live="polite">
                         <span class="grw-spinner" aria-hidden="true"></span>
                         <span><?php esc_html_e('Loading preview…', 'gr-widget'); ?></span>
                     </div>
                     <div class="wb-preview-root grw-widget-preview-modal__preview-root">
-                        <div id="grwi-widget-preview-mount" class="grw-widget-preview-modal__mount" data-wb-builder-preview hidden></div>
+                        <div id="grwi-widget-preview-mount" data-grwidget-locale="<?php echo esc_attr(GRWI_Embed::frontend_locale()); ?>" class="grw-widget-preview-modal__mount" data-wb-builder-preview hidden></div>
                     </div>
                 </div>
             </div>

@@ -1148,14 +1148,14 @@ body.admin_page_grwi-customize .grw-customize__subtitle,
     margin-inline: auto;
 }
 
-.grw-customize[data-grwi-active-section="settings"] .grw-customize__preview-root[data-grwi-widget-align="left"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="badge_"] .grw-typo-root,
-.grw-customize[data-grwi-active-section="settings"] .grw-customize__preview-root[data-grwi-widget-align="left"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="sticker_"] .grw-typo-root {
+.grw-customize .grw-customize__preview-root[data-grwi-widget-align="left"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="badge_"] .grw-typo-root,
+.grw-customize .grw-customize__preview-root[data-grwi-widget-align="left"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="sticker_"] .grw-typo-root {
     justify-content: flex-start;
     margin-inline: 0 auto;
 }
 
-.grw-customize[data-grwi-active-section="settings"] .grw-customize__preview-root[data-grwi-widget-align="right"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="badge_"] .grw-typo-root,
-.grw-customize[data-grwi-active-section="settings"] .grw-customize__preview-root[data-grwi-widget-align="right"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="sticker_"] .grw-typo-root {
+.grw-customize .grw-customize__preview-root[data-grwi-widget-align="right"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="badge_"] .grw-typo-root,
+.grw-customize .grw-customize__preview-root[data-grwi-widget-align="right"] > #grwi-customize-preview-mount[data-grw-mounted][data-layout^="sticker_"] .grw-typo-root {
     justify-content: flex-end;
     margin-inline: auto 0;
 }
@@ -5388,3 +5388,30 @@ body.admin_page_grwi-customize .grw-customize__subtitle,
 @media (max-width: 480px) {
     .grwi-live-draft-switch button { padding: 6px 8px; font-size: 12px; }
 }
+
+/* Placement is physical page alignment, independent of the interface language.
+   Keep it live on every tab, including after a translated preview is patched. */
+.grw-customize__preview-root > #grwi-customize-preview-mount[data-grw-mounted]:not([data-wb-display-mode="floating"]) .grw-placement-shell {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+.grw-customize__preview-root[data-grwi-widget-align="left"] > #grwi-customize-preview-mount[data-grw-mounted]:not([data-wb-display-mode="floating"]) .grw-placement-shell {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+.grw-customize__preview-root[data-grwi-widget-align="right"] > #grwi-customize-preview-mount[data-grw-mounted]:not([data-wb-display-mode="floating"]) .grw-placement-shell {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* Consistent spacing for Style and Review Panel, including supplemental groups. */
+.grw-panel-accordion-stack { display:flex; flex-direction:column; gap:var(--grw-accordion-gap); min-width:0; }
+.grw-panel-accordion-stack > [data-grwi-group],
+.grw-panel-accordion-stack > [data-grwi-group] > .grw-collapse { margin:0; }
+
+/* WordPress .button styling must not reveal unused modal actions. */
+.grw-customize .grw-unlock-modal [hidden] { display:none !important; }
+
+.grw-customize-layout.grw-style-accordions { gap:var(--grw-accordion-gap); }
+.grw-layout-category-icon { display:inline-flex; flex:0 0 18px; width:18px; height:18px; color:var(--grw-accordion-value-color); }
+.grw-layout-category-icon svg { width:18px; height:18px; }

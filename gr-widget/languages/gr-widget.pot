@@ -2165,3 +2165,20 @@ msgstr ""
 #: assets/block.js:71
 msgid "Paste the embed key from GR Widget in the WordPress admin menu."
 msgstr ""
+
+# Widget-language controls; widget interface catalogues are supplied by the hosted renderer.
+
+msgid "Language"
+msgstr ""
+
+msgid "Widget language"
+msgstr ""
+
+msgid "Automatic — Website language"
+msgstr ""
+
+msgid "Automatically displays your widget in your website's language. Choose a language to override this."
+msgstr ""
+
+msgid "Your reviews, reviewer names and custom text stay exactly as written. AI summaries appear only when available in the selected language."
+msgstr ""
